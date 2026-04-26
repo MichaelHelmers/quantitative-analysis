@@ -288,4 +288,4 @@ Try these in fresh cells at the bottom of the notebook:
 
 ## Up next
 
-**Chapter 3: Multiple assets — correlation and diversification.** We move from one ticker to a basket. The big question: when you combine assets, how do their returns *co-move*, and what does that combination do to portfolio-level risk? Spoiler — sometimes a lot, sometimes almost nothing, and the difference is the entire premise of modern portfolio construction.
+**Chapter 3: Multiple Assets — Correlation and Diversification.** We move from one ticker to a basket. The chapter takes the **correlation risk** flavor named in the framing here and breaks it into three concept-flavors: **pairwise correlation** between two assets (Part I), **aggregation / portfolio risk** when many assets combine (Part II), and **regime / crisis correlation** — the empirical finding that correlations themselves shift across regimes and rise in crashes, weakening diversification exactly when it's needed most (Part III). Same Ch2 pattern: build the textbook tool, then show how reality breaks it.

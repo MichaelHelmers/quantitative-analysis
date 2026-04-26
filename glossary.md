@@ -9,6 +9,13 @@ If you hit a term anywhere in the guide that isn't defined here, that's a bug
 
 ---
 
+## Numerals
+
+**60/40 portfolio** *(Ch. 3)* — Canonical balanced allocation of 60% equities
+(typically broad US equity) and 40% bonds (typically intermediate-to-long
+Treasuries). The default "diversified" portfolio in retail and pension
+contexts; works because the SPY/TLT correlation is typically negative.
+
 ## A
 
 **Adjusted close** *(Ch. 1)* — The closing price of a security, retroactively
@@ -40,22 +47,50 @@ recent trough. Mirrors *bear market*.
 *multiply* rather than add: a 5-day return is `(1 + r₁)(1 + r₂)…(1 + r₅) − 1`.
 This is why log returns are convenient — they add.
 
+**Conditional correlation** *(Ch. 3)* — Correlation computed on a subset of
+observations, often a tail (e.g., worst-5%-of-SPY-days). Reveals how
+correlations *change* in stress regimes — though Pearson conditional
+correlation suffers from a truncation artifact when conditioning on extreme
+values, so the heatmap-diptych approach (§4.3) is often preferred.
+
 **Correction** *(Ch. 1)* — A market decline of roughly 10–20% from a recent
 peak. Steeper sustained declines are called *bear markets*.
+
+**Correlation matrix** *(Ch. 3)* — *N* × *N* symmetric matrix of pairwise
+Pearson correlations among *N* assets. Diagonal is 1.0; off-diagonals are in
+[−1, +1].
 
 **Covariance** *(Ch. 2)* — Cov(*X*, *Y*) = E[(*X* − *μ<sub>X</sub>*)(*Y* −
 *μ<sub>Y</sub>*)]. The average product of two variables' deviations from
 their means. Positive when *X* and *Y* tend to be above/below their means
 together, negative when they move oppositely, zero when independent. Variance
 is the special case Cov(*X*, *X*). The numerator of correlation and
-autocorrelation. Will reappear as the central object of Chapter 3 (correlation
-between assets).
+autocorrelation; the central object of the *covariance matrix* in Ch. 3.
+
+**Covariance matrix (Σ)** *(Ch. 3)* — *N* × *N* symmetric matrix where
+Σ<sub>ij</sub> = Cov(*r<sub>i</sub>*, *r<sub>j</sub>*). Diagonal is variances;
+off-diagonals are pairwise covariances. The natural N-asset generalization of
+σ from Ch. 2; the input to portfolio-variance calculations.
+
+**Crisis correlation** *(Ch. 3)* — Informal name for the empirical finding
+that the *structure* of correlations changes during stress regimes —
+typically with most off-diagonal entries climbing toward 1, weakening
+diversification when it's needed most.
 
 ## D
 
 **Distribution** *(Ch. 1)* — The shape describing how often each value occurs
 in a dataset. For a return series, the distribution answers "what fraction of
 days had a return near each level."
+
+**Diversification benefit** *(Ch. 3)* — The reduction in a portfolio's
+volatility below the weighted average of its individual assets' volatilities,
+attributable to *ρ* < 1 (and amplified when *ρ* < 0).
+
+**Diversification floor** *(Ch. 3)* — When all pairwise correlations equal a
+common value *ρ*, the equal-weighted portfolio variance ratio
+*σ<sub>p</sub>²* / *σ²* approaches *ρ* as *N* → ∞ — the irreducible
+(systematic) portion of risk that no amount of diversification can remove.
 
 **Dividend** *(Ch. 1)* — A cash payment from a company to its shareholders.
 Adjusted close prices fold dividends back into historical prices so that
@@ -67,6 +102,11 @@ a standard risk metric.
 
 ## E
 
+**Equal-weight portfolio** *(Ch. 3)* — A portfolio in which every asset has
+the same weight 1/*N*. The simplest non-trivial weighting scheme; useful as
+a benchmark, but tends to over-allocate to high-volatility assets compared
+with risk-aware schemes.
+
 **Equity** *(Ch. 1)* — An ownership share in a company; in everyday language,
 "stock."
 
@@ -74,21 +114,21 @@ a standard risk metric.
 holds a basket of assets and itself trades on an exchange like a single stock.
 Index ETFs (e.g., SPY) are designed to track a specific *index*.
 
+**EVT (extreme value theory)** *(Ch. 2)* — A family of statistical models for
+the tails of a distribution, used when the normal-distribution model
+underestimates the frequency of extreme events. Mentioned in Ch. 2 as a
+deferred topic.
+
+**Excess kurtosis** *(Ch. 2)* — Kurtosis minus 3, so the normal-distribution
+benchmark equals zero. Positive values mean tails heavier than the normal
+predicts.
+
 **Expected value (*E*[·])** *(Ch. 2)* — The average of the bracketed quantity
 over the data. For a sample of *n* observations, *E*[*x*] = (*x*<sub>1</sub> +
 … + *x<sub>n</sub>*) / *n* — the same operation as the *mean*. The bracket
 notation lets us cleanly write averages of more complex expressions, like
 *E*[(*X* − *μ*)²] for variance or *E*[(*X* − *μ<sub>X</sub>*)(*Y* −
 *μ<sub>Y</sub>*)] for covariance.
-
-**Excess kurtosis** *(Ch. 2)* — Kurtosis minus 3, so the normal-distribution
-benchmark equals zero. Positive values mean tails heavier than the normal
-predicts.
-
-**EVT (extreme value theory)** *(Ch. 2)* — A family of statistical models for
-the tails of a distribution, used when the normal-distribution model
-underestimates the frequency of extreme events. Mentioned in Ch. 2 as a
-deferred topic.
 
 ## F
 
@@ -105,15 +145,27 @@ approximately first-moment-stationary.
 **GARCH** *(Ch. 2)* — Generalized AutoRegressive Conditional
 Heteroskedasticity. A family of time-series models that explicitly captures
 volatility clustering by making the conditional variance depend on recent
-shocks. Mentioned in Ch. 2 as a deferred topic.
+shocks. Mentioned in Ch. 2 as a deferred topic. (Ch. 3's analogue for
+correlations is **DCC-GARCH**, also deferred.)
 
 ## H
+
+**Hidden factor exposure** *(Ch. 3)* — The phenomenon that seemingly distinct
+assets share underlying drivers (interest rates, oil, the broad market
+itself), so a "diversified" portfolio may be a single bet. Named in Ch. 3 as
+a deferred flavor of correlation risk; formal treatment in a future
+factor-models chapter.
 
 **Histogram** *(Ch. 1)* — A bar chart that buckets observations into ranges
 (*bins*) and draws a bar whose height shows how many observations fall in
 each bin. The visual representation of an empirical distribution.
 
 ## I
+
+**Idiosyncratic risk** *(Ch. 3)* — The asset-specific portion of risk that
+can be diversified away in a sufficiently large basket. Complement of
+*systematic risk*. Decomposition of risk into idiosyncratic + systematic is
+the seed of CAPM and factor models.
 
 **i.i.d. (independent and identically distributed)** *(Ch. 1)* — An assumption
 that each observation in a series is drawn from the *same* probability
@@ -166,6 +218,19 @@ known to underestimate the frequency of extreme moves.
 
 ## P
 
+**Pearson correlation (*ρ*)** *(Ch. 3)* — *ρ<sub>XY</sub>* = Cov(*X*, *Y*) /
+(*σ<sub>X</sub> σ<sub>Y</sub>*). The unitless, scale-free version of
+covariance; bounded in [−1, +1]; the building block of every portfolio-risk
+calculation.
+
+**Portfolio variance / standard deviation (σ<sub>p</sub>)** *(Ch. 3)* —
+Variance / standard deviation of a weighted basket's return. Computable from
+individual volatilities and pairwise correlations via *σ<sub>p</sub>²* =
+**w**ᵀ **Σ** **w**.
+
+**Portfolio weights (w)** *(Ch. 3)* — Vector of allocations across assets;
+sums to 1 for a fully-invested long-only portfolio.
+
 **Price series** *(Ch. 1)* — A sequence of an asset's prices indexed by time
 (typically one observation per trading day for daily data). The starting
 primitive of nearly every quant analysis.
@@ -191,7 +256,8 @@ qualitative judgment about a company's prospects.
 
 **Regime** *(Ch. 2)* — A persistent macro-state of the market with
 characteristic statistical properties (typical vol level, trend direction).
-Volatility clustering is a manifestation of regime persistence.
+Volatility clustering is a manifestation of regime persistence; correlation
+structure also shifts across regimes (Ch. 3).
 
 **Return** *(Ch. 1)* — Percentage change in price between two times.
 **Simple return** = `Pₜ / Pₜ₋₁ − 1`. **Log return** = `ln(Pₜ / Pₜ₋₁)`. Returns
@@ -200,8 +266,13 @@ returns rather than prices.
 
 **Risk** *(Ch. 1)* — In quantitative finance, the *uncertainty* of an asset's
 future return — not specifically "the chance of loss." Most often quantified
-as *volatility* (std dev of returns), though Chapter 2 introduces other
-measures.
+as *volatility* (std dev of returns); Ch. 2's "What we mean by risk" framing
+breaks risk into magnitude / persistence / path / correlation flavors.
+
+**Rolling correlation** *(Ch. 3)* — Pairwise correlation computed over a
+sliding window of recent observations. Reveals time-variation that a
+single-number long-run correlation hides — e.g., the SPY/TLT correlation
+flipping signs across regimes.
 
 **Rolling window** *(Ch. 2)* — A sliding subset of a time series used to
 compute a statistic at each point in time. A rolling-window standard deviation
@@ -232,7 +303,17 @@ properties (mean, variance, autocorrelation) don't change over time. Real
 return series are at best approximately mean-stationary and clearly *not*
 variance-stationary.
 
+**Systematic risk** *(Ch. 3)* — The portion of risk that *can't* be
+diversified away — common factor exposure shared across many assets.
+Complement of *idiosyncratic risk*; formalized via factor models in later
+chapters.
+
 ## T
+
+**Tail dependence** *(Ch. 3)* — When two assets correlate primarily (or only)
+in the extreme tails of the joint distribution. Standard linear correlation
+can't capture this. Named in Ch. 3 as a deferred flavor of correlation risk;
+treatment alongside EVT and copulas much later.
 
 **Tails** *(Ch. 1)* — The far-left and far-right ends of a distribution,
 where rare extreme values live. See also *fat tails*.
@@ -269,6 +350,10 @@ Ch. 2's tail-count table to compare observed extreme days with the
 normal-distribution prediction.
 
 ## Symbols
+
+**√N rule** *(Ch. 3)* — *σ<sub>p</sub>* = *σ* / √*N* for an equal-weighted
+portfolio of *N* uncorrelated assets with common volatility *σ*. The most
+diversification mathematically possible; a useful upper-bound benchmark.
 
 **√t rule** *(Ch. 1)* — Under i.i.d. assumptions, the variance of a *t*-period
 sum scales linearly in *t*, so the *standard deviation* scales by `√t`. This
