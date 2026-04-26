@@ -106,9 +106,11 @@ Each scatter annotated with its computed *ρ*.
 
 **§3.2 The correlation matrix.** Compute and display the 8×8 correlation matrix as a heatmap (matplotlib `imshow` with annotations). Reading exercises: identify the sector-ETF block (high mutual correlation), spot the SPY-TLT cell (near-zero), spot the GLD column (low correlations all around).
 
-**§3.3 The diversification math empirically.** Plot annualized vol of an equal-weighted basket as N grows from 1 to 8 (in some sensible order). Two regimes visible:
-- Adding tightly-correlated names (sector ETFs to a sector ETF): vol drops modestly.
-- Adding decorrelated names (TLT, GLD to the equity basket): vol drops noticeably.
+**§3.3 The diversification math empirically.** Plot annualized vol of an equal-weighted basket as N grows from 1 to 7, in this **deliberate dramatic order**:
+
+`XLK → +XLF → +XLE → +XLV → +XLU → +TLT → +GLD`
+
+Start with a single sector (XLK), add the other four sector ETFs one at a time (modest drops each — adding correlated names doesn't help much), then add TLT (a sharp drop — first cross-asset name), then GLD (smaller incremental drop). The shape of the curve carries the lesson: **the marginal benefit of one more asset depends entirely on its correlation with what you already hold.** SPY is excluded from this plot because it's a weighted sum of the sector ETFs — including it would muddle the "adding correlated names" story.
 
 Cite the **√N rule** (the limit if assets were uncorrelated) and the **diversification floor** (the limit if assets share a common correlation *ρ*: variance ratio approaches *ρ* as N → ∞). Floor formula in collapsible details.
 
@@ -132,7 +134,7 @@ Numbers will be filled in at implementation time from the actual data.
 
 **§4.2 Conditional correlation.** Compute the correlation between SPY and each other asset, conditional on:
 - All days,
-- The worst 5% of SPY days (left-tail conditioning).
+- The worst **5%** of SPY days (left-tail conditioning — the conventional VaR-territory threshold; gives ~250 days of evidence in the conditional bucket).
 
 Plot side-by-side bars. Correlations rise nearly across the board on bad days. The TLT bar is the most dramatic — its near-zero unconditional correlation rises substantially in stress.
 
@@ -157,7 +159,7 @@ Plus a closing paragraph on the two **deferred flavors** (factor exposure, tail 
 1. **Different basket.** Re-run with crypto (`BTC-USD`, `ETH-USD`) added. Are correlations between crypto and stocks higher or lower than between stocks and bonds?
 2. **The pre-2020 vs post-2020 SPY/TLT story.** Compute SPY/TLT correlation on the 2003–2019 window vs the 2020–present window. What changed?
 3. **Conditional on TLT.** Repeat the §4.2 conditional-correlation exercise but conditioning on the worst 5% of *TLT* days instead of SPY days. Does the same "everything correlates" pattern emerge, or is it asymmetric?
-4. *(stretch)* Pick three tickers you actually own (or would own). Compute pairwise correlations. Does the basket diversify as much as you thought?
+4. *(stretch)* **Cross-asset-class correlation matrix.** Pull six tickers spanning major asset classes — `QQQ` (large-cap tech), `IWM` (small-cap stocks), `EEM` (emerging-markets stocks), `IEF` (intermediate Treasuries), `HYG` (high-yield bonds), `DBC` (broad commodities). Compute the 6×6 correlation matrix as a heatmap. Which pairs are more correlated than you'd have guessed? Which less? (Hint: HYG often surprises people — it's labeled "bonds" but trades like equities.)
 
 ## 6. New terminology
 
@@ -235,4 +237,9 @@ Inherited from prior chapters (see `MEMORY.md` feedback memories):
 
 ## 13. Open questions
 
-None at design-approval time. Implementation may surface small choices (exact rolling-correlation window length, exact conditional-correlation threshold percentile, the order of tickers in the §3.3 add-one-at-a-time vol plot) — all routine implementation calls.
+None. The previously open implementation choices were resolved during design review:
+
+- **Order of tickers in the §3.3 add-one-at-a-time vol plot:** locked to `XLK → +XLF → +XLE → +XLV → +XLU → +TLT → +GLD` (drama-maximizing).
+- **Conditional-correlation threshold in §4.2:** locked to the conventional **5%** (worst-5%-of-SPY-days).
+- **Exercise 4:** locked to the cross-asset-class basket exercise (concrete, replicable) rather than open-ended "tickers you own."
+- **Rolling-correlation window length in §4.1:** **60 days** (consistent with Ch2's rolling-vol windows; ≈ one quarter; same noise/lag tradeoff).
