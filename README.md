@@ -11,6 +11,12 @@ runnable Jupyter notebook (`lesson.ipynb`).
 | 01 | [`01-foundations`](./01-foundations) | What is quantitative analysis? Prices, returns, and your first plot. |
 | 02 | [`02-risk`](./02-risk) | Risk: volatility clustering and fat tails — how real returns violate Chapter 1's assumptions. |
 | 03 | [`03-correlation`](./03-correlation) | Multiple assets: correlation and diversification — pairwise correlation, the diversification math, and how correlations themselves shift across regimes. |
+| 04 | _coming next_ | Risk metrics: drawdown, Value at Risk, and the Sharpe ratio — path-dependent risk and risk-adjusted return. |
+| 05 | _planned_ | Portfolio construction: efficient frontier, mean-variance optimization, and risk parity. |
+| 06 | _planned_ | Factor models: CAPM, Fama–French, and decomposing returns into systematic and idiosyncratic pieces. |
+| 07 | _planned_ | Time-varying models: GARCH for volatility clustering, DCC-GARCH for correlation regimes. |
+| 08 | _planned_ | Tail risk: extreme value theory, generalized Pareto, copulas, and tail dependence. |
+| 09 | _planned_ | Backtesting strategies: walk-forward testing, look-ahead bias, transaction costs — the capstone. |
 
 ## How to use this repo
 
