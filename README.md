@@ -26,7 +26,7 @@ runnable Jupyter notebook (`lesson.ipynb`).
 
 ## Setup (one-time)
 
-This guide uses **Python 3.14** in a **virtual environment** (a self-contained Python install for this project, so its packages don't collide with anything else on your machine) managed by **`uv`** (a fast modern replacement for `pip` + `venv`). If you've never set this up before, the steps below get you from a fresh machine to a running notebook.
+This guide uses a recent **Python (3.11 or newer)** in a **virtual environment** (a self-contained Python install for this project, so its packages don't collide with anything else on your machine) managed by **`uv`** (a fast modern replacement for `pip` + `venv`). If you've never set this up before, the steps below get you from a fresh machine to a running notebook.
 
 ### 1. Install `uv`
 
@@ -52,10 +52,12 @@ Verify the install: `uv --version` should print something like `uv 0.9.x`.
 From the repo root:
 
 ```bash
-uv venv --python 3.14
+uv venv
 ```
 
-This creates a `.venv/` directory with a Python 3.14 interpreter. **If Python 3.14 isn't already on your machine, `uv` will download and install it automatically** — no separate Python install step needed.
+This creates a `.venv/` directory with a recent Python interpreter. **If you don't have a compatible Python on your machine, `uv` will download and install one automatically** — no separate Python install step needed.
+
+If you'd like to pin a specific version (e.g. for reproducibility across collaborators), pass `--python 3.12` (or `3.11`, `3.13`, `3.14`, etc.) instead — anything 3.11+ works for this project.
 
 ### 3. Install the project's dependencies
 
