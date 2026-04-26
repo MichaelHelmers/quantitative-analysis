@@ -104,16 +104,47 @@ Hold *w<sub>X</sub>* fraction of asset X and *w<sub>Y</sub>* = 1 − *w<sub>X</s
 
 where:
 - *w<sub>X</sub>*, *w<sub>Y</sub>* — the **portfolio weights** (must sum to 1 for a fully-invested long-only portfolio).
-- *σ<sub>X</sub>*, *σ<sub>Y</sub>* — individual asset standard deviations.
-- *ρ* — the pairwise correlation between *X* and *Y*.
-- *σ<sub>p</sub>²* — the variance of the portfolio's return.
+- *σ<sub>X</sub>*, *σ<sub>Y</sub>* — individual asset standard deviations of returns. The formula is **frequency-consistent**: plug in daily σ's and you get a daily σ<sub>p</sub> out; plug in annualized σ's (i.e. daily σ × √252) and you get an annualized σ<sub>p</sub> out. Both σ's must be at the same frequency. The example below plugs in annualized values so the answer comes out in annualized terms directly — the convention used throughout this chapter.
+- *ρ* — the pairwise correlation between *X* and *Y*. Unitless; **the same number at any frequency**, so no scaling needed.
+- *σ<sub>p</sub>²* — the variance of the portfolio's return, in whatever frequency the inputs were.
 
 Three terms: two **own-variance** terms (each weighted by *w²*) plus the **cross-term** (the diversification engine). When *ρ* < 1, the cross-term shrinks total variance below the weighted average. When *ρ* < 0, it shrinks variance further still — the cross-term goes negative. When *ρ* = 1, no diversification; when *ρ* = −1, perfect hedging is possible.
 
-For a 50/50 SPY/TLT portfolio over the 20-year window, the math gives:
-- SPY annualized vol ~19.4%, TLT ~14.9%, *ρ* = −0.309.
-- 50/50 portfolio vol: **~10.3%** — almost half the SPY-only risk, despite TLT individually having ~75% of SPY's vol.
-- Weighted average of individual vols would be ~17.2%; the actual portfolio vol is ~7 percentage points below that. The cross-term is doing real work.
+Walk the formula end-to-end for a 50/50 SPY/TLT portfolio. Every number below comes from the 20-year daily-log-return panel computed in §1; standard deviations are annualized so the answer pops out in annualized terms directly.
+
+**Inputs:**
+
+| Symbol | Meaning | Value |
+| --- | --- | ---: |
+| *w<sub>X</sub>* | SPY weight | **0.5** |
+| *w<sub>Y</sub>* | TLT weight | **0.5** |
+| *σ<sub>X</sub>* | SPY annualized vol | **0.1945** (19.45%) |
+| *σ<sub>Y</sub>* | TLT annualized vol | **0.1491** (14.91%) |
+| *ρ* | SPY/TLT correlation | **−0.309** |
+
+**Plug into the formula:**
+
+> *σ<sub>p</sub>²* = *w<sub>X</sub>²σ<sub>X</sub>²* + *w<sub>Y</sub>²σ<sub>Y</sub>²* + 2 *w<sub>X</sub>w<sub>Y</sub>σ<sub>X</sub>σ<sub>Y</sub>ρ*
+>
+> = (0.5)²·(0.1945)² + (0.5)²·(0.1491)² + 2·(0.5)·(0.5)·(0.1945)·(0.1491)·(−0.309)
+>
+> = 0.25·0.03783 + 0.25·0.02223 + 0.5·0.02901·(−0.309)
+>
+> = 0.00946 + 0.00556 + (−0.00448)
+>
+> = **0.01054**
+
+> *σ<sub>p</sub>* = √0.01054 = **0.1027 ≈ 10.3% annualized**
+
+**Reading the three terms:**
+
+| Term | Value | Meaning |
+| --- | ---: | --- |
+| *w<sub>X</sub>²σ<sub>X</sub>²* | +0.00946 | SPY's own variance contribution |
+| *w<sub>Y</sub>²σ<sub>Y</sub>²* | +0.00556 | TLT's own variance contribution |
+| 2 *w<sub>X</sub>w<sub>Y</sub>σ<sub>X</sub>σ<sub>Y</sub>ρ* | **−0.00448** | the cross-term — *negative* because *ρ* < 0 |
+
+The cross-term is the **diversification benefit**: it *subtracts* from the total variance. That's why 50/50 SPY/TLT vol comes out to **10.3%** rather than the **17.2%** weighted average of the two individual vols (`0.5 × 19.45% + 0.5 × 14.91% = 17.18%`). About 7 percentage points of risk reduction, paid for entirely by the negative correlation.
 
 <details>
 <summary><b>The math, if you want it: deriving the two-asset variance</b></summary>
@@ -335,4 +366,4 @@ Try these in fresh cells at the bottom of the notebook:
 
 ## Up next
 
-**Chapter 4: Risk metrics — drawdown, VaR, Sharpe.** Chapter 1 promised "max drawdown, we'll formalize later" — that promise gets paid. We'll add path-dependent risk measures to the magnitude / persistence / aggregation flavors covered so far, and bolt the **Sharpe ratio** onto the portfolio constructions from this chapter to start asking "what's the *risk-adjusted return* of these baskets?"
+**Chapter 4: Estimating Expected Returns.** Three chapters spent on risk; zero on return. Ch4 fills the gap. The reader leaves with two findings: (1) the historical mean as an estimator of true expected return is **brutally noisy** at any reasonable sample size, and (2) **shrinkage toward a prior** is the practitioner-grade remedy. Both findings honestly inform Chapter 5's Sharpe ratio.

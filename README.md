@@ -20,8 +20,8 @@ The path is one coherent sequence aimed at a DIY quant who eventually wants to d
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 04 | _coming next_ | Estimating expected returns: historical mean, shrinkage, and why estimating return is the hard problem in finance. |
-| 05 | _planned_ | Risk metrics: drawdown, Value at Risk, and the Sharpe ratio — path-dependent risk and risk-adjusted return. |
+| 04 | [`04-expected-returns`](./04-expected-returns) | Estimating expected returns: historical mean, shrinkage, and why estimating return is the hard problem in finance. |
+| 05 | _coming next_ | Risk metrics: drawdown, Value at Risk, and the Sharpe ratio — path-dependent risk and risk-adjusted return. |
 
 ### Part 3 — Portfolio Construction
 
