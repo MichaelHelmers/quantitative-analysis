@@ -38,6 +38,14 @@ clustering.
 **Bear market** *(Ch. 1)* — A sustained market decline of roughly 20% or more
 from a recent peak. The threshold is a convention, not a law.
 
+**Bias** *(Ch. 4)* — The expected difference between an estimator's value and
+the true population value it's trying to estimate. An *unbiased* estimator
+has bias = 0. The sample mean is unbiased for the population mean.
+
+**Bias–variance tradeoff** *(Ch. 4)* — The principle that accepting a small
+bias in an estimator can sometimes reduce its overall mean-squared error.
+Underlies shrinkage estimators and a huge swath of statistics and ML.
+
 **Bull market** *(Ch. 1)* — A sustained rally of roughly 20% or more from a
 recent trough. Mirrors *bear market*.
 
@@ -52,6 +60,11 @@ observations, often a tail (e.g., worst-5%-of-SPY-days). Reveals how
 correlations *change* in stress regimes — though Pearson conditional
 correlation suffers from a truncation artifact when conditioning on extreme
 values, so the heatmap-diptych approach (§4.3) is often preferred.
+
+**Confidence interval** *(Ch. 4)* — A range around a point estimate that
+contains the true population value with stated probability under repeated
+sampling. *μ̂* ± 1.96 · SE gives a 95% CI under approximate normality of
+the sample mean.
 
 **Correction** *(Ch. 1)* — A market decline of roughly 10–20% from a recent
 peak. Steeper sustained declines are called *bear markets*.
@@ -76,6 +89,10 @@ off-diagonals are pairwise covariances. The natural N-asset generalization of
 that the *structure* of correlations changes during stress regimes —
 typically with most off-diagonal entries climbing toward 1, weakening
 diversification when it's needed most.
+
+**Cross-sectional mean** *(Ch. 4)* — The mean across assets at a single
+point in time, in contrast to a time-series mean (one asset across many
+points). The default prior in James-Stein shrinkage applied to a basket.
 
 ## D
 
@@ -107,8 +124,16 @@ the same weight 1/*N*. The simplest non-trivial weighting scheme; useful as
 a benchmark, but tends to over-allocate to high-volatility assets compared
 with risk-aware schemes.
 
+**Equilibrium / required return** *(Ch. 4)* — The expected return an asset
+*should* have given its risk and factor exposures. Named in Ch. 4 as a
+deferred flavor; formalized in Ch. 8 (CAPM, Fama-French).
+
 **Equity** *(Ch. 1)* — An ownership share in a company; in everyday language,
 "stock."
+
+**Estimator** *(Ch. 4)* — A function of data used to guess an unknown
+population quantity. The sample mean is an estimator of the population mean;
+the sample variance is an estimator of the population variance.
 
 **ETF (Exchange-Traded Fund)** *(Ch. 1)* — A pooled investment vehicle that
 holds a basket of assets and itself trades on an exchange like a single stock.
@@ -140,6 +165,11 @@ real return distributions.
 **First moment** *(Ch. 2)* — The mean of a distribution. Daily returns are
 approximately first-moment-stationary.
 
+**Forecast / conditional expected return** *(Ch. 4)* — Expected return *given
+current state* — a prediction that varies day-to-day, in contrast to the
+long-run unconditional mean. Named in Ch. 4 as a deferred flavor; formalized
+in Ch. 8 and Ch. 11–12.
+
 ## G
 
 **GARCH** *(Ch. 2)* — Generalized AutoRegressive Conditional
@@ -164,7 +194,14 @@ each bin. The visual representation of an empirical distribution.
 
 **Idiosyncratic risk** *(Ch. 3)* — The asset-specific portion of risk that
 can be diversified away in a sufficiently large basket. Complement of
-*systematic risk*. Decomposition of risk into idiosyncratic + systematic is
+*systematic risk*.
+
+## J
+
+**James-Stein estimator** *(Ch. 4)* — A specific shrinkage estimator that
+strictly dominates the sample mean in total MSE for *K* ≥ 3 assets shrunk
+together. The positive-part version is the standard practical form. Used
+widely in production portfolio optimization. Decomposition of risk into idiosyncratic + systematic is
 the seed of CAPM and factor models.
 
 **i.i.d. (independent and identically distributed)** *(Ch. 1)* — An assumption
@@ -235,6 +272,12 @@ sums to 1 for a fully-invested long-only portfolio.
 (typically one observation per trading day for daily data). The starting
 primitive of nearly every quant analysis.
 
+**Prior** *(Ch. 4)* — The target value toward which a shrinkage estimator
+pulls. Common choices: the cross-sectional mean of all assets being shrunk,
+or zero.
+(typically one observation per trading day for daily data). The starting
+primitive of nearly every quant analysis.
+
 ## Q
 
 **Q-Q plot** *(Ch. 2)* — Quantile–quantile plot. A visual diagnostic that
@@ -253,6 +296,10 @@ and mathematics to make decisions about financial markets, in contrast to
 qualitative judgment about a company's prospects.
 
 ## R
+
+**Realized return** *(Ch. 4)* — What actually happened over a past window.
+Distinguished in Ch. 4 from "expected return" because it's the *data* used
+to estimate, not the estimate itself.
 
 **Regime** *(Ch. 2)* — A persistent macro-state of the market with
 characteristic statistical properties (typical vol level, trend direction).
@@ -284,8 +331,20 @@ visualizes how volatility changes through time.
 weighted by market capitalization. The most-watched gauge of the U.S. stock
 market.
 
+**Sample mean (*μ̂*)** *(Ch. 4)* — The arithmetic average of a finite sample
+of observations: *μ̂* = (1/N) Σᵢ *rᵢ*. The natural estimator of the
+population mean. Unbiased; standard error scales like 1/√N.
+
 **Second moment** *(Ch. 2)* — The variance of a distribution. Daily returns
 are *not* second-moment-stationary — the rolling-vol plot is the proof.
+
+**Shrinkage** *(Ch. 4)* — Pulling a noisy estimate toward a prior to reduce
+mean-squared error at the cost of a small bias. Applied to expected-return
+estimates in Ch. 4; used in production portfolio construction in Ch. 6.
+
+**Signal-to-noise ratio (SNR)** *(Ch. 4)* — The ratio of an estimate to its
+standard error; equivalent to the t-statistic. Measures how confidently we
+can distinguish the estimate from zero.
 
 **Simple return** *(Ch. 1)* — `Pₜ / Pₜ₋₁ − 1`. The return number a brokerage
 statement reports.
@@ -297,6 +356,10 @@ changes; *adjusted close* corrects historical prices for splits.
 **Standard deviation (σ)** *(Ch. 1)* — Square root of the *variance*. Same
 units as the underlying data, which is why it's typically the dispersion
 measure we report.
+
+**Standard error (SE)** *(Ch. 4)* — The standard deviation of an estimator's
+sampling distribution. For the sample mean: *SE(μ̂)* = *σ* / √N. **Annualize
+by × 252** (same rule as the mean), not √252.
 
 **Stationarity** *(Ch. 2)* — A property of a time series whose statistical
 properties (mean, variance, autocorrelation) don't change over time. Real
@@ -317,6 +380,10 @@ treatment alongside EVT and copulas much later.
 
 **Tails** *(Ch. 1)* — The far-left and far-right ends of a distribution,
 where rare extreme values live. See also *fat tails*.
+
+**t-statistic** *(Ch. 4)* — An estimate divided by its standard error.
+Roughly, the number of standard errors away from zero. |t| > 2 is the
+conventional threshold for "statistically distinguishable from zero."
 
 **Ticker** *(Ch. 1)* — Short alphabetic symbol identifying a security on an
 exchange (e.g., `SPY`, `AAPL`, `BRK-B`).
