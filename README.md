@@ -6,17 +6,70 @@ runnable Jupyter notebook (`lesson.ipynb`).
 
 ## Curriculum (work in progress)
 
+The path is one coherent sequence aimed at a DIY quant who eventually wants to day-trade NQ futures with a portfolio on the side. Part 1 covers foundations; Parts 2–4 build the academic spine; Parts 5–6 introduce strategies and how to test them honestly; Part 7 teaches realistic execution; Part 8 brings everything to intraday futures; Part 9 takes you live.
+
+### Part 1 — Foundations
+
 | # | Chapter | Topic |
 |---|---------|-------|
 | 01 | [`01-foundations`](./01-foundations) | What is quantitative analysis? Prices, returns, and your first plot. |
 | 02 | [`02-risk`](./02-risk) | Risk: volatility clustering and fat tails — how real returns violate Chapter 1's assumptions. |
 | 03 | [`03-correlation`](./03-correlation) | Multiple assets: correlation and diversification — pairwise correlation, the diversification math, and how correlations themselves shift across regimes. |
-| 04 | _coming next_ | Risk metrics: drawdown, Value at Risk, and the Sharpe ratio — path-dependent risk and risk-adjusted return. |
-| 05 | _planned_ | Portfolio construction: efficient frontier, mean-variance optimization, and risk parity. |
-| 06 | _planned_ | Factor models: CAPM, Fama–French, and decomposing returns into systematic and idiosyncratic pieces. |
-| 07 | _planned_ | Time-varying models: GARCH for volatility clustering, DCC-GARCH for correlation regimes. |
-| 08 | _planned_ | Tail risk: extreme value theory, generalized Pareto, copulas, and tail dependence. |
-| 09 | _planned_ | Backtesting strategies: walk-forward testing, look-ahead bias, transaction costs — the capstone. |
+
+### Part 2 — Risk-Adjusted Performance
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 04 | _coming next_ | Estimating expected returns: historical mean, shrinkage, and why estimating return is the hard problem in finance. |
+| 05 | _planned_ | Risk metrics: drawdown, Value at Risk, and the Sharpe ratio — path-dependent risk and risk-adjusted return. |
+
+### Part 3 — Portfolio Construction
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 06 | _planned_ | Portfolio construction: efficient frontier, mean-variance optimization, and risk parity. |
+
+### Part 4 — Modeling Returns
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 07 | _planned_ | Linear regression primer: the one piece of inferential statistics the rest of the curriculum leans on. |
+| 08 | _planned_ | Factor models: CAPM, Fama–French, and decomposing returns into systematic and idiosyncratic pieces. |
+| 09 | _planned_ | Time-varying models: GARCH for volatility clustering, DCC-GARCH for correlation regimes. |
+| 10 | _planned_ | Tail risk: extreme value theory, generalized Pareto, copulas, and tail dependence. |
+
+### Part 5 — Strategy Building
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 11 | _planned_ | Strategy taxonomy: mean reversion, momentum, trend following, pairs / stat-arb — and where each one's **edge** comes from. |
+| 12 | _planned_ | Strategy mechanics: signal generation, **quantifying edge** (expected value per trade, profit factor), position sizing (Kelly, fractional Kelly), risk-of-ruin. |
+
+### Part 6 — Backtesting and Validation
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 13 | _planned_ | Backtesting: walk-forward testing, look-ahead bias, transaction costs, and **testing whether an edge is real** vs a data-mining artifact. |
+
+### Part 7 — Execution
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 14 | _planned_ | Microstructure and execution: order book, bid/ask, market vs limit orders, slippage models, implementation shortfall. |
+
+### Part 8 — Intraday and Futures
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 15 | _planned_ | From daily to intraday: tick data, bar construction (time / volume / dollar / imbalance), intraday seasonality, event windows (FOMC, CPI, NFP). |
+| 16 | _planned_ | Futures mechanics: contracts, rolls, basis, margin, mark-to-market — and NQ-specific details (tick size, point value, RTH vs ETH session structure). |
+| 17 | _planned_ | Intraday strategies and pitfalls: liquidity-driven mean reversion, news momentum, breakout — and the failure modes that scale worse intraday. |
+
+### Part 9 — Live Trading
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 18 | _planned_ | Going live: paper trading, broker APIs, monitoring, kill switches, and the operational side of running real money. |
 
 ## How to use this repo
 
@@ -45,7 +98,7 @@ This guide uses a recent **Python (3.11 or newer)** in a **virtual environment**
   pip install uv
   ```
 
-Verify the install: `uv --version` should print something like `uv 0.9.x`.
+Verify the install: `uv --version` should print something like `uv 0.9.x` or newer.
 
 ### 2. Create the virtual environment
 
