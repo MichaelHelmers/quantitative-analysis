@@ -10,7 +10,7 @@ runnable Jupyter notebook (`lesson.ipynb`).
 |---|---------|-------|
 | 01 | [`01-foundations`](./01-foundations) | What is quantitative analysis? Prices, returns, and your first plot. |
 | 02 | [`02-risk`](./02-risk) | Risk: volatility clustering and fat tails — how real returns violate Chapter 1's assumptions. |
-| 03 | _coming next_ | Multiple assets: correlation and the case for diversification. |
+| 03 | [`03-correlation`](./03-correlation) | Multiple assets: correlation and diversification — pairwise correlation, the diversification math, and how correlations themselves shift across regimes. |
 
 ## How to use this repo
 
