@@ -252,6 +252,19 @@ When you run the notebook, expect:
 
 ---
 
+## So what? — decisions this chapter lets you make
+
+Theory only earns its keep if it changes what you'd do. Even with just Chapter 1's vocabulary, you can already make these calls:
+
+- **Sanity-check any return series before trusting it.** If your annualized vol for a broad equity index isn't in the 15–25% range, something is wrong — wrong column (raw close instead of adjusted), wrong frequency (you forgot to convert to daily), wrong window (one weird year). Vol is a fingerprint; an out-of-range fingerprint means stop and debug, don't keep building.
+- **Size positions by volatility, not by dollar amount.** "$10,000 in SPY" and "$10,000 in a small-cap biotech" are not the same risk. If you target, say, 1% portfolio vol per position, you hold roughly *target ÷ σ<sub>asset</sub>* worth of each — so a 60%-vol stock gets ~⅓ the dollars of a 20%-vol stock. This single idea (**vol-targeting**) is the backbone of most systematic risk frameworks.
+- **Translate between horizons with the √t rule.** A strategy quoting "1% daily vol" has ~16% annual vol (1% × √252). A "20% annualized vol" hedge fund moves about 1.25% on a typical day (20% / √252). Whenever someone quotes a vol number, you should be able to reach the other horizons in your head.
+- **Always use adjusted close for return math.** Splits and unadjusted dividends will produce fake double-digit "returns" on specific days that will silently corrupt every downstream calculation.
+
+What this chapter *can't* yet tell you: whether the vol number you computed is *reliable* (Chapter 2 — it isn't, because vol changes), or how a position interacts with the rest of a portfolio (Chapter 3 — that needs correlation).
+
+---
+
 ## Key Terms (Chapter 1)
 
 | Term | Meaning | First used |
