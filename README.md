@@ -26,16 +26,59 @@ runnable Jupyter notebook (`lesson.ipynb`).
 
 ## Setup (one-time)
 
-Install the required packages:
+This guide uses **Python 3.14** in a **virtual environment** (a self-contained Python install for this project, so its packages don't collide with anything else on your machine) managed by **`uv`** (a fast modern replacement for `pip` + `venv`). If you've never set this up before, the steps below get you from a fresh machine to a running notebook.
+
+### 1. Install `uv`
+
+`uv` is a single command-line tool that handles Python versions, virtual environments, and package installs.
+
+- **macOS / Linux:**
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
+- **Windows (PowerShell):**
+  ```powershell
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
+- **Or via pip** (if you already have Python installed):
+  ```bash
+  pip install uv
+  ```
+
+Verify the install: `uv --version` should print something like `uv 0.9.x`.
+
+### 2. Create the virtual environment
+
+From the repo root:
 
 ```bash
-pip install -r requirements.txt
+uv venv --python 3.14
 ```
 
-Then launch Jupyter:
+This creates a `.venv/` directory with a Python 3.14 interpreter. **If Python 3.14 isn't already on your machine, `uv` will download and install it automatically** — no separate Python install step needed.
+
+### 3. Install the project's dependencies
 
 ```bash
-jupyter notebook
+uv pip install -r requirements.txt
+```
+
+This installs `jupyter`, `numpy`, `pandas`, `matplotlib`, `yfinance`, and `scipy` into the venv.
+
+### 4. Launch Jupyter
+
+```bash
+# macOS / Linux:
+.venv/bin/jupyter lab
+
+# Windows:
+.venv\Scripts\jupyter lab
 ```
 
 A browser tab will open. Navigate into `01-foundations/` and open `lesson.ipynb`.
+
+### Troubleshooting
+
+- **`ModuleNotFoundError` when running a cell** — your Jupyter kernel isn't using the venv's Python. Make sure you launched Jupyter via `.venv/bin/jupyter lab` (not a system-wide `jupyter`). Inside Jupyter you can verify with **Kernel → Change Kernel** and picking the Python from `.venv/`.
+- **`pip install` ran but Jupyter still can't import packages** — that probably installed packages to your *system* Python, not the venv. Always use `uv pip install` for this project (or activate the venv first with `source .venv/bin/activate` on macOS/Linux, `.venv\Scripts\activate` on Windows).
+- **Adding a new package later** — `uv pip install <package>` from the repo root puts it in the venv. Then add the name to `requirements.txt` so future setups install it too.
