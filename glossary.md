@@ -43,6 +43,14 @@ This is why log returns are convenient — they add.
 **Correction** *(Ch. 1)* — A market decline of roughly 10–20% from a recent
 peak. Steeper sustained declines are called *bear markets*.
 
+**Covariance** *(Ch. 2)* — Cov(*X*, *Y*) = E[(*X* − *μ<sub>X</sub>*)(*Y* −
+*μ<sub>Y</sub>*)]. The average product of two variables' deviations from
+their means. Positive when *X* and *Y* tend to be above/below their means
+together, negative when they move oppositely, zero when independent. Variance
+is the special case Cov(*X*, *X*). The numerator of correlation and
+autocorrelation. Will reappear as the central object of Chapter 3 (correlation
+between assets).
+
 ## D
 
 **Distribution** *(Ch. 1)* — The shape describing how often each value occurs
@@ -65,6 +73,13 @@ a standard risk metric.
 **ETF (Exchange-Traded Fund)** *(Ch. 1)* — A pooled investment vehicle that
 holds a basket of assets and itself trades on an exchange like a single stock.
 Index ETFs (e.g., SPY) are designed to track a specific *index*.
+
+**Expected value (*E*[·])** *(Ch. 2)* — The average of the bracketed quantity
+over the data. For a sample of *n* observations, *E*[*x*] = (*x*<sub>1</sub> +
+… + *x<sub>n</sub>*) / *n* — the same operation as the *mean*. The bracket
+notation lets us cleanly write averages of more complex expressions, like
+*E*[(*X* − *μ*)²] for variance or *E*[(*X* − *μ<sub>X</sub>*)(*Y* −
+*μ<sub>Y</sub>*)] for covariance.
 
 **Excess kurtosis** *(Ch. 2)* — Kurtosis minus 3, so the normal-distribution
 benchmark equals zero. Positive values mean tails heavier than the normal
