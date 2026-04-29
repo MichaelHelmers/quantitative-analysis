@@ -79,6 +79,14 @@ For SPY's full 20-year window, the notebook computes:
 | 95% CI on annualized mean | **[1.84%, 18.90%]** |
 | CI width | 17.06 percentage points |
 
+> **What does this CI actually claim?** Subtle but important — most casual explanations get this wrong:
+> 1. **It's NOT** "there's a 95% probability the true value is in [1.84%, 18.90%]." Once the data is in and the interval is computed, the true value either is or isn't in there — no probability about it.
+> 2. **The "95%" describes the *procedure*, not this specific interval.** If we ran the same calculation on a thousand different 20-year samples, 95% of the resulting intervals would contain the true value. Our particular interval is one of those thousand; we don't know whether it's one of the 950 that contains the truth or one of the 50 that doesn't.
+> 3. **In conversation, "we're 95% confident the true mean is in this range" is fine.** It communicates the right intuition for any decision-making purpose, even though it's technically the wrong semantics.
+> 4. **A wide CI doesn't mean we were "careless."** It means our best honest procedure can't pin down the true value tighter than this with the data we have. The path forward isn't "be more careful with the data" — it's more data, a different estimator (§3 shrinkage), or outside information.
+>
+> Useful mental picture: imagine the true expected return is a stake driven into the ground at an unknown spot. Your sample mean tosses a horseshoe; the CI is the ring it forms. You can't see the stake. Your *tossing technique* rings the stake 95% of the time across many tosses. The horseshoe you just threw either rings it or it doesn't — but you trust the technique.
+
 That CI is the chapter's punchline. Twenty years of data, and we still can't pin down SPY's true expected return any tighter than a **17-percentage-point** range. To make that range concrete, translate each end into something a non-finance reader can evaluate.
 
 #### Lower bound (~1.84%): "you didn't earn an equity premium"
