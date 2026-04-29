@@ -61,11 +61,13 @@ where:
 
 > **Foot-gun: annualizing SE.** Treat SE the same way you treat the mean — **× 252**, not √252. SE has the *same units as the mean* (per period), and annualization multiplies the per-period mean by 252.
 
-A 95% confidence interval, assuming approximate normality of the sample mean (justified by the Central Limit Theorem for large *N*, even though individual returns are fat-tailed):
+A 95% confidence interval, assuming approximate normality of the sample mean:
 
 > *CI₉₅* = *μ̂* ± 1.96 · *SE(μ̂)*
 
 where 1.96 is the 0.975 quantile of the standard normal distribution.
+
+> **Why does the sample mean's distribution become approximately normal?** The **Central Limit Theorem (CLT)** is a foundational statistics result: when you average enough independent samples from any reasonably-behaved distribution, the *average's* distribution becomes approximately normal regardless of the original distribution's shape. With ~5,000 daily returns, the CLT applies cleanly even though individual returns are fat-tailed (Ch2 §2). The CLT is why a `μ̂ ± 1.96·SE` interval is a defensible CI even though the inputs aren't themselves normal.
 
 For SPY's full 20-year window, the notebook computes:
 
@@ -77,7 +79,25 @@ For SPY's full 20-year window, the notebook computes:
 | 95% CI on annualized mean | **[1.84%, 18.90%]** |
 | CI width | 17.06 percentage points |
 
-That CI is the chapter's punchline. Twenty years of data — and the data is statistically consistent with *anywhere* from "barely outpacing T-bills" to "doubling in four years."
+That CI is the chapter's punchline. Twenty years of data, and we still can't pin down SPY's true expected return any tighter than a **17-percentage-point** range. To make that range concrete, translate each end into something a non-finance reader can evaluate.
+
+#### Lower bound (~1.84%): "you didn't earn an equity premium"
+
+> **T-bills** — short-term US Treasury debt with maturities from a few weeks to a year. Conventionally treated as the closest thing to a "risk-free" rate, since the US government has never defaulted on dollar-denominated debt. T-bills are the standard "what would I have earned with no risk?" benchmark.
+
+Over the 20-year window we're using (2006–2026), T-bill yields averaged **roughly 2% annualized** — they were near 0% from 2009–2015 and again from 2020–2021, then climbed to 4–5%+ in 2022–2024 as the Fed hiked aggressively. So at the lower CI bound, SPY's true expected return is essentially *tied with* T-bills — meaning you'd have earned the same money holding cash with no equity risk.
+
+The whole point of taking equity risk is supposed to be the premium *above* the risk-free rate (called the **equity risk premium**). The lower CI bound is consistent with a world where that premium was *zero*. The data can't statistically rule that out.
+
+#### Upper bound (~18.90%): "stocks are an obvious slam dunk"
+
+> **Rule of 72** — a mental shortcut for compound growth: doubling time in years ≈ 72 / annualized return %. (It's a first-order approximation that works well for returns in the 4–25% range.)
+
+Apply it: 72 / 18.90 ≈ **3.8 years**. At an 18.90% annualized return, $100k becomes ~$200k in just under four years. That's a rate competitive with late-1990s tech-boom returns; "every dollar I don't have in stocks is wasted" territory.
+
+#### The point of bracketing the bounds this way
+
+Two scenarios — "stocks aren't worth the risk" and "stocks are an obvious slam dunk" — are basically opposite views of equity investing. **Twenty years of data is consistent with either.** That's the gut punch: both intuitions could be right, and the historical mean alone can't tell you which. §3's shrinkage is one practitioner-grade response to this problem.
 
 ### 2.3 Subsample stability — same data, different windows
 
@@ -100,10 +120,15 @@ A reader sizing a position based on "SPY returns 10% per year" needs to know tha
 | --- | --- |
 | Point estimate (20-year sample) | ~10% / year |
 | Standard error (annualized) | ~4–5% |
-| 95% CI on annualized mean | roughly **1.8% to 18.9%** |
-| On a $100k position, that's | anywhere from **~$1,800/year above T-bills** to **~$18,900/year** |
+| 95% CI on annualized mean | roughly **1.84% to 18.90%** |
+| Dollar terms on $100k | roughly **$1,840/year to $18,900/year** |
 
-Both ends of that range are statistically consistent with the same 20 years of data.
+Two ways to read those bounds honestly (using the T-bills and Rule-of-72 framings established in §2.2):
+
+- **Lower end ($1,840/year, ~1.84%).** Essentially tied with T-bills, which averaged ~2% over the same window. The CI is consistent with SPY having earned **no equity premium at all** — i.e., the same return you'd have gotten holding cash with no risk. Strict reading: the lower bound is actually *slightly below* the ~2% T-bill average, so the CI is even consistent with SPY underperforming cash in expectation.
+- **Upper end ($18,900/year, ~18.90%).** "Doubling every ~3.8 years" territory by the Rule of 72. The CI is consistent with SPY being a generational investment opportunity.
+
+**Both extremes are statistically consistent with the same 20 years of data.**
 
 Two practical takeaways:
 1. **A point estimate is the *center* of a wide distribution, not a fact.** Treating "10% per year" as if it were a known constant is bad statistics with real downstream consequences.
