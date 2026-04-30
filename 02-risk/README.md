@@ -6,7 +6,9 @@
 >
 > Both are useful starting points; both are wrong in specific, consequential ways. Chapter 2 makes the breaks concrete.
 
-To study rare events we need a longer history than Chapter 1's 5-year window — five years isn't enough trading days to see a real crisis. This chapter pulls **20 years** of SPY data, capturing the 2008 financial crisis, the 2020 COVID crash, and several smaller regimes in between.
+> **i.i.d. — independent and identically distributed.** *Independent* means today's return carries no information about tomorrow's (no memory). *Identically distributed* means every day is drawn from the *same* distribution — same mean, same variance, same shape — through the entire history. Together, i.i.d. is the assumption that lets you treat 5,000 daily returns as 5,000 independent draws from one fixed bell curve, which is what Chapter 1's √t annualization rule and most introductory risk math require. This chapter shows both halves of the assumption fail on real data.
+
+To study rare events we need a longer history than Chapter 1's 5-year window — five years isn't enough trading days to see a real crisis. This chapter pulls **20 years** of SPY data, capturing the 2008 financial crisis (the **Global Financial Crisis** or GFC — a banking-system collapse triggered by U.S. mortgage defaults; SPY drew down ~55% peak-to-trough from Oct 2007 to Mar 2009), the 2020 COVID crash (a ~34% peak-to-trough fall in five weeks as global activity shut down in Feb–Mar 2020), and several smaller regimes in between.
 
 We split the chapter in two halves. Part I attacks the *normal* assumption (the **fat-tails** finding). Part II attacks the *i.i.d.* assumption (the **volatility clustering** finding). The order is pedagogical, not chronological — fat tails reuse Chapter 1's tools almost unchanged, while clustering needs new computational machinery (rolling windows, autocorrelation).
 
@@ -27,7 +29,10 @@ Chapter 1 collapsed risk into a single number — σ, the standard deviation of 
 Chapter 2 attacks #2 and #3 head-on with two empirical findings about real returns: **fat tails** (the bell curve underestimates the worst days) and **volatility clustering** (σ has memory; calm and storm each persist). Together, these are the chapter's account of **magnitude risk** and **persistence risk**.
 
 The other two flavors are real and central — they just aren't this chapter:
-- **Drawdown / path risk** lands in a future risk-metrics chapter (alongside VaR, Sharpe), promised since Chapter 1.
+- **Drawdown / path risk** lands in a future risk-metrics chapter (alongside VaR and Sharpe), promised since Chapter 1.
+  - **Drawdown** — the percent fall from a previous high-water mark to a current low; **max drawdown** is the worst such fall over a window. SPY's max drawdown over the 20 years here is ~55% (the GFC peak-to-trough).
+  - **VaR (Value-at-Risk)** — a single-number summary of the form "the worst 1-day loss, with 99% confidence, is X." If a 99% 1-day VaR is $3,500, the model says only 1 day in 100 should lose more than $3,500. We use the term informally below; the formal version comes later.
+  - **Sharpe ratio** — risk-adjusted return: (mean return − risk-free rate) / σ. A way to compare strategies on a common axis. Detailed in a later chapter.
 - **Correlation risk** is the entire subject of Chapter 3.
 
 When the rest of this chapter says "risk," read it as "the magnitude and persistence dimensions of risk" — not "everything anyone has ever called risk."
@@ -136,8 +141,8 @@ This is the same story kurtosis told us, in a form that's hard to ignore: **risk
 Kurtosis ≈ 14 and "|z| > 5 happens several times in 20 years" are abstract. The same finding in dollars:
 
 - SPY's **worst single day** in this 20-year window is roughly **−10.9%** (March 16, 2020). Under a normal model fit to the same data, a day that bad has probability ≈ 10⁻¹⁹ — not "once in a century" but "once in a billion times the age of the universe." The normal model isn't *a little* off in the tail; it's not in the same conceptual neighborhood as reality.
-- On a **$100,000 SPY position** that day, the actual loss was ~$10,900. A normal-distribution Value-at-Risk report run the night before would have flagged any loss above ~$3,500 as a once-in-a-century event. The realized loss was ~3× that "once-in-a-century" line.
-- 2008's worst day (−9.0%, Oct 15) and 1987's Black Monday (−20.5%) tell the same story.
+- On a **$100,000 SPY position** that day, the actual loss was ~$10,900. A normal-distribution Value-at-Risk report (VaR — the worst loss the model assigns better than 1-in-100 odds to) run the night before would have flagged any loss above ~$3,500 as a once-in-a-century event. The realized loss was ~3× that "once-in-a-century" line.
+- 2008's worst day (−9.0%, Oct 15 — at the depths of the GFC) and 1987's **Black Monday** (−20.5% on Oct 19, 1987 — the largest one-day percent drop in U.S. equity history, attributed to a feedback loop between portfolio-insurance program selling and a falling market) tell the same story.
 
 This is what **magnitude risk** is, concretely: not "kurtosis is high" but "*the single-day worst case you'll experience is several times larger than a bell-curve risk model says it is.*" The fat-tails finding is the chapter's way of seeing magnitude risk for what it actually is.
 
@@ -156,13 +161,13 @@ where:
 - *r<sub>t−N+1</sub>*, …, *r<sub>t</sub>* — the *N* most recent daily returns at time *t*.
 - The √252 factor is the same annualization rule from Chapter 1 §4.
 
-The notebook plots this with *N* = 21. The single full-sample number from Chapter 1 (~19%) becomes a dashed line — useful as a summary, but the rolling line tells a richer story:
+The notebook plots this with *N* = 21. The single full-sample number from Chapter 1 (~19%) becomes a dashed line — useful as a summary, but the rolling line tells a richer story (each event below is a **regime** — a stretch where the typical day-to-day behavior is qualitatively different from the surrounding stretches):
 
-- **2008–2009** — vol explodes during the financial crisis, sustained for ~12 months at 50%+.
-- **2010–2014** — gradually elevated, with the August 2011 European-debt spike clearly visible.
-- **2015–2019** — generally calm, occasionally interrupted (Aug 2015, Feb 2018 — "vol-mageddon").
-- **March 2020** — the COVID spike, briefly peaking above 80%.
-- **2022** — sustained elevated vol during the rate-hike correction.
+- **2008–2009** — vol explodes during the GFC (the 2008 banking-system collapse described above), sustained for ~12 months at 50%+.
+- **2010–2014** — gradually elevated, with the **August 2011 European-debt spike** clearly visible (the Eurozone sovereign-debt crisis: markets feared Greece, then Italy and Spain, would default on government debt and break up the euro currency union; S&P also downgraded the U.S. credit rating that month).
+- **2015–2019** — generally calm, occasionally interrupted (Aug 2015 — Chinese yuan devaluation and growth scare; **Feb 2018 — "vol-mageddon"**, a one-day collapse of short-volatility ETFs that triggered a 4% SPY drop).
+- **March 2020** — the **COVID spike** (the five-week ~34% drawdown when global lockdowns began), briefly peaking above 80%.
+- **2022** — sustained elevated vol during the **rate-hike correction**: the Federal Reserve raised its benchmark interest rate from ~0% to ~4.5% over the year to fight inflation, which mechanically lowers asset prices (higher rates make future cash flows worth less today); SPY drew down ~25%.
 
 The notebook also overlays *N* = 5, 21, 63 on the same axes. The 5-day version reacts quickly but is jittery; 63-day is smooth but lags by ~3 months. There's no canonical "right" window — the choice depends on what the vol estimate is being used for.
 
@@ -192,7 +197,11 @@ We compute autocorrelation two ways:
 
 The two side-by-side bar charts in the notebook show the contrast cleanly. Returns are essentially uncorrelated at every lag — the textbook "markets are unpredictable" finding. Absolute returns are clearly positively autocorrelated, slowly decaying out to many lags.
 
-That gap **is** volatility clustering: the **second moment** of returns (magnitude, variance) exhibits memory; the **first moment** (signed return) does not. Almost every quantitative risk model — **GARCH** being the most famous — exists to model this asymmetry.
+That gap **is** volatility clustering: the **second moment** of returns (magnitude, variance) exhibits memory; the **first moment** (signed return) does not.
+
+> **First / second moment.** The *n*-th *moment* of a distribution is *E*[*X<sup>n</sup>*] (or *E*[(*X* − *μ*)<sup>*n*</sup>] for the *centered* version). The **first moment** is the mean; the **second (centered) moment** is the variance. Higher moments measure shape: the third captures skew (asymmetry), the fourth captures kurtosis (tail weight). When we say "the second moment has memory," we mean variance/magnitude is autocorrelated; when we say "the first moment doesn't," we mean signed returns are not.
+
+Almost every quantitative risk model — **GARCH** being the most famous — exists to model this asymmetry.
 
 ### 3.3 What this means as an investor (persistence risk, made concrete)
 
@@ -201,7 +210,7 @@ Two investors who each hold the **same $100,000 SPY position** experience radica
 - **June 2017**, rolling 21-day vol ≈ **7%** annualized → daily std ≈ 0.4%. A typical day is ±$400; a "rough" day might be −$1,000. You barely notice the position day to day.
 - **March 2020**, rolling 21-day vol ≈ **80%** annualized → daily std ≈ 5%. A typical day is ±$5,000; the worst day was −$10,900. You notice the position every five minutes.
 
-Same nominal exposure. More than 10× the day-to-day pain. That's **persistence risk** — also called *regime risk*. The single 19% annualized number from Chapter 1 is the *average* across these wildly different stretches; it is *not* a description of what any individual stretch of holding the asset actually feels like.
+Same nominal exposure. More than 10× the day-to-day pain. That's **persistence risk** — also called *regime risk*, where a **regime** is a stretch of time over which a market's statistical properties (volatility, correlations, typical drift) are roughly stable, separated from neighboring stretches by transitions that can be slow or abrupt. The single 19% annualized number from Chapter 1 is the *average* across these wildly different stretches; it is *not* a description of what any individual stretch of holding the asset actually feels like.
 
 Why the word "persistence": the autocorrelation finding tells you these regimes are *sticky*. A calm last month very probably means a calm next week; a wild last month very probably means a wild next week. The danger isn't that one bad day happens — it's that bad days *cluster into stretches* where the worst-case-of-the-stretch is far worse than the worst-case-of-any-given-day.
 
@@ -213,12 +222,12 @@ A series is **stationary** when its statistical properties don't change over tim
 
 Chapter 1's working definition was *risk = volatility = σ*. Chapter 2 has expanded that into something more honest. The two empirical findings map cleanly onto two distinct flavors of risk that the single-σ picture conflated:
 
-- **Magnitude risk — captured by *fat tails*.** The single-day worst case is bigger than a bell curve admits, by orders of magnitude in the deep tail. Excess kurtosis well above zero, Q-Q tails bending off the diagonal, observed |z|>5 days where the normal model expects approximately zero, and a real $100k SPY position losing ~$10,900 on a day a normal-distribution risk report would have called once-in-a-century. *Where this matters:* option pricing models that assume normality (Black–Scholes) systematically underprice deep out-of-the-money options; Value-at-Risk computed under normal assumptions is too optimistic about crash risk.
+- **Magnitude risk — captured by *fat tails*.** The single-day worst case is bigger than a bell curve admits, by orders of magnitude in the deep tail. Excess kurtosis well above zero, Q-Q tails bending off the diagonal, observed |z|>5 days where the normal model expects approximately zero, and a real $100k SPY position losing ~$10,900 on a day a normal-distribution risk report would have called once-in-a-century. *Where this matters:* option pricing models that assume normality (**Black–Scholes** — the 1973 closed-form formula for the price of a European call/put option, which assumes log returns are normally distributed; still the textbook baseline) systematically underprice **deep out-of-the-money options** (options whose strike price is far above today's price for a call, or far below for a put — they only pay off in extreme moves, and a model that thinks extremes are rarer than they are will price these too cheaply). Value-at-Risk computed under normal assumptions is too optimistic about crash risk.
 - **Persistence risk — captured by *volatility clustering*.** σ is itself a moving target. Rolling vol swings between ~10% and ~80%; positive autocorrelation in |returns| persists out to many lags. The lived experience of holding the asset varies by 10× depending on which regime you're in. *Where this matters:* the single annualized-vol number from Chapter 1 is an average over genuinely different regimes; risk models and position-sizing rules that assume vol is constant miss most of the action.
 
 Two flavors of risk that we *haven't* yet covered, and that you should know are missing:
 
-- **Drawdown / path risk** — peak-to-trough damage compounding across many days. SPY's max drawdown in this window is roughly **−55%** (peak Oct 2007 → trough Mar 2009), which a one-day-at-a-time view never sees. Owed from Chapter 1; lands in a future risk-metrics chapter alongside VaR.
+- **Drawdown / path risk** — *drawdown* is the percent fall from a previous high-water mark to the current level; *max drawdown* is the deepest such fall over the window. SPY's max drawdown in this window is roughly **−55%** (peak Oct 2007 → trough Mar 2009, the GFC), which a one-day-at-a-time view never sees. Owed from Chapter 1; lands in a future risk-metrics chapter alongside VaR.
 - **Correlation risk** — when "diversifiers" fail you. Comes up the moment we hold more than one asset, which is Chapter 3's territory.
 
 Both of this chapter's findings have formal modeling tools we'll meet later in the guide:
@@ -234,7 +243,7 @@ Neither is required for everyday return analysis; both are worth knowing about.
 Chapter 1 gave you a single vol number and a normal-distribution mental model. Chapter 2 broke both. Here's what to actually *do* with the broken pieces:
 
 - **Discount any "X-sigma event" claim by orders of magnitude.** When a risk report or news article calls something "a 5σ move — should happen once in 14,000 years," translate it as "happens a few times per decade in this asset." The fat-tail count table is the receipt. Practically: if a strategy's worst-case scenarios are computed under a normal assumption, assume the real worst case is meaningfully worse.
-- **Don't size positions off long-run volatility — use a recent window.** Chapter 1's vol-targeting rule (target ÷ σ) only works if σ reflects *current* conditions. The rolling-vol plot shows σ swinging between ~10% and ~80%. A reasonable default is to size off **N = 21-day** (≈ one month) realized vol, refreshed daily. Long windows (N ≥ 63) lag the regime; very short windows (N ≤ 5) jitter too much to size off.
+- **Don't size positions off long-run volatility — use a recent window.** Chapter 1's **vol-targeting** rule (pick a target volatility for your portfolio, then set position size = target ÷ σ of the asset, so that more-volatile assets get smaller allocations) only works if σ reflects *current* conditions. The rolling-vol plot shows σ swinging between ~10% and ~80%. A reasonable default is to size off **N = 21-day** (≈ one month) realized vol, refreshed daily. Long windows (N ≥ 63) lag the regime; very short windows (N ≤ 5) jitter too much to size off.
 - **After a shock, expect more shock.** Volatility clustering is the formal version of "the market is jumpy right now." If today's |z| > 3, tomorrow's vol is statistically likely to be elevated — that is exactly what positive autocorrelation in |returns| means. The simplest decision rule: after a large-magnitude day, *reduce* gross exposure until rolling vol comes back down. The opposite mistake — "vol is back to normal because yesterday was calm" — ignores the slow autocorrelation decay.
 - **Don't expect that rule to predict direction.** The autocorrelation of *signed* returns is essentially zero. Clustering tells you the *size* of tomorrow's move is forecastable; the *sign* isn't. Anyone selling a "the market will drop tomorrow" forecast based on yesterday's drop is selling something the data doesn't support.
 - **Use Q-Q plots as a fast sanity check on any return series.** Five seconds of looking at a Q-Q plot tells you whether a model that assumes normality is going to embarrass you in this regime. If both ends bend off the diagonal, normality-based risk numbers are not safe.
@@ -247,6 +256,16 @@ What this chapter *can't* yet tell you: how to combine these effects across mult
 
 | Term | Meaning | First used |
 |------|---------|-----------:|
+| i.i.d. | Independent and identically distributed; every observation is an independent draw from the *same* fixed distribution | Goal |
+| GFC (Global Financial Crisis) | 2007–2009 banking-system collapse triggered by U.S. mortgage defaults; SPY drew down ~55% | Goal |
+| COVID crash | Feb–Mar 2020 ~34% peak-to-trough drop as global lockdowns began | Goal |
+| Black Monday | Oct 19, 1987 — −20.5% one-day drop, largest in U.S. equity history | §2.5 |
+| 2022 rate-hike correction | Fed raised benchmark rate from ~0% to ~4.5% to fight inflation; SPY drew down ~25% | §3.1 |
+| VaR (Value-at-Risk) | Single-number risk summary: "with probability *p*, the next-period loss won't exceed $X" | "What we mean by risk" |
+| Drawdown / max drawdown | Percent fall from previous high-water mark; max is the worst such fall over a window | "What we mean by risk" |
+| Sharpe ratio | (Mean return − risk-free rate) / σ; risk-adjusted return on a common axis | "What we mean by risk" |
+| Black–Scholes | 1973 closed-form option-pricing formula assuming normal log returns | §4 |
+| Vol-targeting | Position sizing rule: size = target σ ÷ asset σ, so more-volatile assets get smaller allocations | "So what" |
 | Magnitude risk | How bad a *single* day can be; the dimension of risk fat tails make visible | "What we mean by risk" |
 | Persistence risk | How long bad conditions stay bad; the dimension clustering makes visible | "What we mean by risk" |
 | Drawdown / path risk | Peak-to-trough damage compounded across many days (deferred) | "What we mean by risk" |
