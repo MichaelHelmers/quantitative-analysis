@@ -65,9 +65,39 @@ A 95% confidence interval, assuming approximate normality of the sample mean:
 
 > *CI₉₅* = *μ̂* ± 1.96 · *SE(μ̂)*
 
-where 1.96 is the 0.975 quantile of the standard normal distribution.
+The 1.96 is the 0.975 quantile of the **standard normal distribution** — the normal distribution with mean 0 and standard deviation 1, written *N(0, 1)*. The 0.975 quantile is the value below which 97.5% of the standard-normal area sits; the symmetry of the distribution means 2.5% sits above +1.96 and 2.5% sits below −1.96, summing to a 5% "rejection region" outside the CI.
 
 > **Why does the sample mean's distribution become approximately normal?** The **Central Limit Theorem (CLT)** is a foundational statistics result: when you average enough independent samples from any reasonably-behaved distribution, the *average's* distribution becomes approximately normal regardless of the original distribution's shape. With ~5,000 daily returns, the CLT applies cleanly even though individual returns are fat-tailed (Ch2 §2). The CLT is why a `μ̂ ± 1.96·SE` interval is a defensible CI even though the inputs aren't themselves normal.
+
+#### The t-statistic and hypothesis testing — the same idea as the CI, packed into one number
+
+The same calculation can be expressed as a single ratio:
+
+> *t* = *μ̂* / *SE(μ̂)*
+
+where:
+- *μ̂* — the sample mean.
+- *SE(μ̂)* — its standard error.
+- *t* — **t-statistic**: how many standard errors the estimate sits from zero. **Units:** unitless ratio.
+
+"*|t| > 1.96*" and "the 95% CI excludes zero" say *exactly the same thing* — the inequality just rearranges the CI formula. The t-statistic is the convenient single-number form when you're tabulating many estimates side by side or asking a yes/no question of one.
+
+> **Hypothesis test framing.** When a researcher asks "is the true mean statistically distinguishable from zero?", they're running a **null hypothesis test**:
+>
+> - **H₀ (null hypothesis):** μ = 0 — there's no effect; the asset's true expected return is zero.
+> - **H₁ (alternative hypothesis):** μ ≠ 0 — there is an effect; the true expected return is non-zero.
+>
+> The test **rejects H₀** at confidence level *c* when |*t*| exceeds the threshold for that level. The thresholds are quantiles of the standard normal:
+>
+> | Confidence | Threshold | One-sided tail probability |
+> | --- | ---: | ---: |
+> | 90% | 1.645 | 5% in each tail |
+> | 95% | 1.960 | 2.5% in each tail |
+> | 99% | 2.576 | 0.5% in each tail |
+>
+> "Reject H₀ at 95%" means: under the null, you'd see |*t*| this large by chance only 5% of the time, so the data is hard to reconcile with H₀.
+>
+> **Two-sided vs one-sided.** The thresholds above assume a **two-sided test** — we reject H₀ for either μ > 0 or μ < 0; both directions count. A **one-sided test** only rejects in one pre-specified direction (e.g., "is this strategy's mean *positive*?") and uses a slightly looser threshold (1.645 instead of 1.96 at 95%). All tests in this curriculum are two-sided unless explicitly stated.
 
 For SPY's full 20-year window, the notebook computes:
 
@@ -118,7 +148,13 @@ A different angle on the same problem. Pick disjoint 5-year sub-windows of the S
 | 2016–2020 | **14.07%** | 18.97% |
 | 2021–2025 | 13.45% | 17.09% |
 
-The annualized mean varies by **~13 percentage points** across these disjoint 5-year windows of the same asset. The 2006–2010 window includes the 2008 crisis and looks terrible; the 2016–2020 window sat in a strong bull market and looks great. **None of those sub-window means is "wrong"** — they're all valid sample means of real data — but the spread is exactly the noise the standard error formula was telling us about, made visceral.
+The annualized mean varies by **~13 percentage points** across these disjoint 5-year windows of the same asset.
+
+> **What was the "2008 crisis"?** Formally the **Global Financial Crisis (GFC)** — a global financial collapse triggered by US subprime housing-loan defaults that cascaded through banks, money markets, and credit spreads. SPY drew down ~55% peak-to-trough into March 2009. Realized vol in our 2006–2010 window averaged ~25%, vs ~15–18% for calmer windows.
+>
+> **What was the "2022 selloff"?** The Federal Reserve's most aggressive rate-hike cycle in four decades — pushing the federal-funds rate from ~0% to ~4.5% in nine months — repriced both stocks and bonds simultaneously. SPY drew down ~25% in 2022; long-duration bonds (TLT) drew down ~30%+ in the same window. This appears in the **2021–2025** sub-window.
+
+The 2006–2010 window includes the GFC and looks terrible; the 2016–2020 window sat in a long, calm bull market and looks great. **None of those sub-window means is "wrong"** — they're all valid sample means of real data — but the spread is exactly the noise the standard error formula was telling us about, made visceral.
 
 ### 2.4 What this means with $100k
 
@@ -145,6 +181,18 @@ Two practical takeaways:
 ## 3. Part II — Shrinkage: pulling estimates toward a prior
 
 §2 showed that *each individual* sample mean is noisy. Counterintuitive fact: even though the sample mean is *unbiased* for any single asset, you can do better in *aggregate* by deliberately introducing a small bias. Each estimate gets pulled toward a common prior; in exchange, the total mean-squared error across all assets goes down. This is the **bias–variance tradeoff** — the foundational idea behind a huge swath of statistics and ML.
+
+> **Vocabulary for §3.** A handful of statistics terms get used heavily below; defining them inline so the rest of the section reads cleanly.
+>
+> - **Bias** — the expected difference between an estimator's output and the true value, *averaged across all possible samples*. A formula: *Bias(μ̂) = E[μ̂] − μ*. An **unbiased** estimator has zero bias on average. The sample mean is unbiased for the population mean: *E[μ̂] = μ*.
+> - **Unbiased ≠ accurate.** Any single sample's *μ̂* can still be far from μ. Unbiasedness is a property of the *estimator* across infinitely many repeated samples, not of any particular estimate from one sample.
+> - **Variance of an estimator** — how much *μ̂* wobbles around its average across different samples. The square root of this variance is the standard error from §2.2.
+> - **Mean-squared error (MSE)** — average squared distance from an estimator's output to the truth, across all possible samples: *MSE(μ̂) = E[(μ̂ − μ)²] = Bias(μ̂)² + Var(μ̂)*. MSE combines both kinds of error in one number; that decomposition is exact.
+> - **Bias-variance tradeoff** — accepting a small bias (deliberately pulling the estimate away from the unbiased value) can *reduce* MSE if it shrinks variance by more than it inflates bias². That's the formal statement of "shrinkage trades a little bias for a lot of stability."
+
+> **What's a "prior"?** A **prior** is a default guess for the parameter you're trying to estimate, chosen *before* (or independently of) looking at this particular sample — it's whatever you'd believe in the absence of data. The term comes from Bayesian statistics, where you literally combine a prior with the data to get a "posterior" updated belief; we're using it more loosely here, just to mean the value we shrink toward. Common choices in this chapter: the **cross-sectional mean** (defined below) or **zero** ("in the absence of evidence, assume no return"). The prior doesn't have to be exactly right — it just has to be a reasonable default that, when blended with noisy data, produces a less noisy combined estimate than the data alone.
+
+> **What's "cross-sectional"?** "Cross-sectional" means **across assets at a single point in time** — as opposed to **time-series**, which means *across time for one asset*. If you line up all 8 of our tickers and average their 20-year mean returns, that's a cross-sectional average (one number per asset, then averaged across the 8 assets). If you average SPY's daily returns over 20 years, that's a time-series average. The **cross-sectional mean** in this chapter is the average of the 8 individual annualized means — ~8.47% on our basket — and it's the default prior we shrink toward (intuition: "in the absence of evidence, assume each asset earns the basket average").
 
 ### 3.1 Intuition
 
@@ -202,7 +250,12 @@ The lesson isn't "JS is broken on financial data." The lesson is: **the historic
 
 ### 3.4 What this means for portfolio construction
 
-**Practitioner-grade fact:** essentially all production mean-variance optimization uses *shrunk* expected-return estimates, not raw sample means. The reason: optimizers maximize Sharpe-like objectives that are *very* sensitive to the input expected returns, and naive sample means produce wildly unstable optimal weights — small changes in the data move the "optimal" portfolio dramatically.
+> **Vocabulary heads-up — terms used below before later chapters formalize them.**
+> - **Mean-variance optimization (MVO)** — the textbook portfolio-construction method that picks portfolio weights to maximize expected return for a given risk level (or equivalently, minimize risk for a given expected return). Originally Markowitz 1952. Inputs: a vector of expected returns (one per asset) and a covariance matrix (asset-pair correlations × vols). Output: an "efficient" set of weights for each chosen risk level. **Chapter 6** runs MVO end-to-end.
+> - **Efficient frontier** — the curve traced out by MVO as you sweep the target risk level from low to high. Each point on the curve is the highest-expected-return portfolio achievable at that level of risk.
+> - **Sharpe ratio** — formally introduced in **Chapter 5**; for now, just read it as "expected return per unit of volatility." MVO objectives are mathematically very close to "maximize Sharpe."
+
+**Practitioner-grade fact:** essentially all production mean-variance optimization uses *shrunk* expected-return estimates, not raw sample means. The reason: MVO objectives are *very* sensitive to the input expected returns, and naive sample means produce wildly unstable optimal weights — small changes in the data move the "optimal" portfolio dramatically.
 
 Our §3.3 result reinforces this strongly. A portfolio optimizer fed naive sample means would treat XLK (14.7%) as a far better bet than TLT (3.3%) — and would over-allocate to XLK accordingly. JS-shrunk inputs say "you don't actually have evidence to support that allocation"; the resulting portfolio is more equal-weighted and far more stable.
 
@@ -218,13 +271,23 @@ This is a different problem with different methods, different success criteria, 
 
 Both are explicitly deferred:
 
-- **Regression-based.** Predict next-period returns from features — lagged returns, valuation ratios, factor exposures, macro variables. The output is a coefficient on each feature and a forecast that varies daily. Setup for **Chapter 8 (factor models)**, which uses regression formally; the Chapter 7 regression primer introduces the machinery first.
-- **Strategy-edge-based.** Every trading strategy is implicitly a forecast model. "Buy when RSI < 30" is a (very simple) prediction that next-period expected return is positive when the indicator condition fires. Setup for **Chapter 11–12 (strategy taxonomy + mechanics)**, which formalizes "edge" as the t-statistic of a strategy's mean trade PnL.
+- **Regression-based.** Predict next-period returns from **features** — input variables thought to carry forecasting information. Common families:
+  - *Lagged returns* — the asset's own returns from the past few days (does yesterday's move predict tomorrow's?).
+  - *Valuation ratios* — accounting metrics that contextualize price relative to fundamentals (e.g., **price-to-earnings**, the price per share divided by trailing earnings per share — high P/E means "expensive" relative to current profits; **price-to-book**, price divided by net asset value per share).
+  - *Factor exposures* — sensitivity to broad systematic factors (the asset's covariance with a "factor portfolio" — e.g., the market itself, or a "value-minus-growth" portfolio). Defined precisely in **Chapter 8**.
+  - *Macro variables* — economy-wide indicators (inflation rate, the yield curve's slope, unemployment).
+  
+  The regression output is a coefficient on each feature plus a forecast that varies daily. Setup for **Chapter 8 (factor models)**, which uses regression formally; the **Chapter 7** regression primer introduces the machinery first.
+- **Strategy-edge-based.** Every trading strategy is implicitly a forecast model. Example: *"Buy when RSI < 30."*
+  > **RSI** = **Relative Strength Index**, a momentum oscillator that maps recent price moves to a value in [0, 100]. RSI below 30 conventionally flags "oversold"; above 70 flags "overbought." The specific indicator doesn't matter for the example — any rule that fires on observable data is implicitly a prediction.
+  
+  The rule is a (very simple) prediction that next-period expected return is positive when the indicator condition fires. Setup for **Chapter 11–12 (strategy taxonomy + mechanics)**, which formalize "edge" as the t-statistic of a strategy's mean trade PnL.
 
 ### 4.2 Why these are separate chapters
 
 - **The methods differ.** Regression vs feature engineering vs rule-based signals vs ML.
-- **The success criteria differ.** Long-run unconditional estimation cares about standard error of the mean. Forecasting cares about **information ratio** (forecast accuracy relative to forecast volatility), out-of-sample R², or strategy-level Sharpe.
+- **The success criteria differ.** Long-run unconditional estimation cares about standard error of the mean. Forecasting cares about **information ratio** (forecast accuracy relative to forecast volatility), **out-of-sample R²**, or strategy-level Sharpe.
+  > **R²** (the *coefficient of determination*) — the fraction of variance in the target variable that the model's predictions account for. R² = 1 means perfect explanation; R² = 0 means the model does no better than predicting the mean for every observation; R² < 0 means it does *worse* than the mean (possible out-of-sample, never in-sample). **Out-of-sample** means evaluated on data not used to fit the model — the only honest test of forecast skill, since a sufficiently flexible model can drive *in-sample* R² arbitrarily high without learning anything generalizable.
 - **The data needs differ.** Long-run estimation wants more history. Forecasting often wants more *features*, not more time.
 
 ## 5. What we just learned (recap by concept-flavor)
@@ -259,9 +322,13 @@ The "given the asset's risk and factor exposures, what *should* its expected ret
 | Estimator | A function of data used to guess an unknown population quantity | §2.1 |
 | Standard error (SE) | Standard deviation of an estimator's sampling distribution | §2.2 |
 | Confidence interval | Range around an estimate containing the true value with stated probability under repeated sampling | §2.2 |
-| t-statistic | Estimate divided by its standard error | §2.2 |
-| Bias | Expected difference between an estimator and the true value | §3 |
-| Bias-variance tradeoff | Accepting a small bias to reduce overall mean-squared error | §3 |
+| Standard normal distribution | Normal distribution with mean 0 and standard deviation 1, written *N(0, 1)* | §2.2 |
+| t-statistic | Estimate divided by its standard error; *t* = *μ̂* / *SE(μ̂)* | §2.2 |
+| Null hypothesis test | Procedure that rejects H₀ when |*t*| exceeds a confidence-level threshold | §2.2 |
+| Two-sided / one-sided test | Whether the test rejects in either direction or only one | §2.2 |
+| Bias | Expected difference between an estimator and the true value; *Bias(μ̂) = E[μ̂] − μ* | §3 |
+| Mean-squared error (MSE) | Expected squared error of an estimator; *MSE = bias² + variance* | §3 |
+| Bias-variance tradeoff | Accepting a small bias to reduce total MSE | §3 |
 | Shrinkage | Pulling a noisy estimate toward a prior | §3.1 |
 | Prior | The target value toward which a shrinkage estimator pulls | §3.1 |
 | Cross-sectional mean | Mean across assets at a point in time (vs the time-series mean of one asset) | §3.1 |
