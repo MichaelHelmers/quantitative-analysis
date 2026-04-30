@@ -117,8 +117,11 @@ We'll pull daily data for **SPY**, the SPDR S&P 500 **ETF**.
 >   (e.g., `SPY`, `AAPL`, `MSFT`).
 > - **Index** — a rule-based basket of securities meant to represent a market or
 >   segment. The **S&P 500** is an index of the 500 largest U.S. public
->   companies, weighted by market value. An index itself isn't directly
->   tradable — it's just a number.
+>   companies, weighted by **market capitalization** (or "market cap" — the
+>   total dollar value of a company's outstanding shares, computed as share
+>   price × shares outstanding; a $3-trillion-cap company gets ~30× the weight
+>   of a $100-billion-cap company). An index itself isn't directly tradable —
+>   it's just a number.
 > - **ETF (Exchange-Traded Fund)** — a fund that holds a basket of assets and
 >   *itself* trades on an exchange like a single stock. SPY is an ETF whose
 >   holdings are designed to track the S&P 500 index, which is why buying one
@@ -218,8 +221,11 @@ Memorize it.
 When you run the notebook, expect:
 
 - A **price chart** with a generally upward trend (the U.S. market has trended
-  up over the last 5 years, with the COVID **drawdown** in March 2020 and
-  **corrections** in 2022 visible).
+  up over the last 5 years, with the **COVID crash** of March 2020 — a roughly
+  one-month ~34% peak-to-trough fall in SPY as global lockdowns hit — and the
+  **2022 selloff** — a slower, ~25% decline as the Federal Reserve hiked
+  interest rates from near-zero to over 4% to fight inflation — both clearly
+  visible as the largest **drawdowns** in the window).
 
 > - **Drawdown** — the peak-to-trough decline in price, usually quoted as a
 >   percent. The "max drawdown" of an asset is the worst such decline observed
@@ -280,6 +286,7 @@ What this chapter *can't* yet tell you: whether the vol number you computed is *
 | Ticker | Short symbol identifying a security on an exchange | §3 |
 | Index | Rule-based basket representing a market segment | §3 |
 | S&P 500 | Index of the 500 largest U.S. public companies | §3 |
+| Market capitalization | Share price × shares outstanding; total dollar value of a company | §3 |
 | ETF | Exchange-Traded Fund — a basket that trades like one stock | §3 |
 | Trading day | A day the market is open; ~252 per year | §3 |
 | OHLCV | Open / High / Low / Close / Volume — daily price columns | §3 |
@@ -301,6 +308,8 @@ What this chapter *can't* yet tell you: whether the vol number you computed is *
 | Drawdown | Peak-to-trough decline in price | §5 |
 | Correction | A market decline of ~10–20% from a recent peak | §5 |
 | Bear / Bull market | Sustained >20% decline / rally | §5 |
+| COVID crash (Mar 2020) | ~34% one-month SPY drawdown as global lockdowns hit | §5 |
+| 2022 selloff | ~25% drawdown driven by Fed rate hikes from ~0% to >4% | §5 |
 
 ---
 
