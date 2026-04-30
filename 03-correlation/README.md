@@ -6,6 +6,14 @@ We split the chapter in three parts. **Part I (Pairwise correlation)** introduce
 
 The chapter uses an 8-ticker basket pulled from yfinance — **SPY, TLT, GLD** for cross-asset texture, plus five US sector ETFs (**XLK, XLF, XLE, XLV, XLU**) for within-asset-class structure. Same 20-year window as Chapter 2, log returns throughout.
 
+> **ETF (Exchange-Traded Fund)** — a fund that holds a basket of underlying assets (stocks, bonds, gold, etc.) and trades on an exchange like a single stock. Buying one share of SPY gives you proportional exposure to all ~500 stocks in the S&P 500 index; one share of TLT gives you exposure to a basket of long-dated US Treasury bonds. ETFs are how a retail investor cheaply gets diversified exposure to an asset class or sector without buying every underlying name.
+>
+> **Sector ETF** — an ETF that holds only stocks from one *sector* of the economy (e.g. technology, financials, energy). The five used here (XLK, XLF, XLE, XLV, XLU) are the SPDR "Select Sector" ETFs that slice the S&P 500 into industry buckets.
+>
+> **Treasury bond / TLT** — a bond issued by the US federal government. TLT specifically holds long-dated Treasuries (20+ years to maturity). Treasuries are the canonical "safe" asset; they pay fixed coupons and have negligible default risk, but their *price* moves inversely to interest rates. When rates rise, TLT falls; when rates fall, TLT rallies.
+>
+> **GLD** — an ETF that holds physical gold bullion. One share moves with the spot price of gold.
+
 ---
 
 ## What we mean by "correlation risk"
@@ -52,10 +60,12 @@ where:
 
 Why divide by the product of standard deviations? Covariance scales with the units of the inputs. The normalization removes that scale. A correlation computed on percent returns gives the same answer as one on basis-point returns, on the same data. Bounded range, comparable across pairs.
 
+> **Basis point (bp)** — 1/100th of a percentage point, i.e. 0.01%. A bond yield moving from 3.50% to 3.75% has moved "25 basis points." The unit shows up constantly in fixed-income and rates discussions; here it's just an example of a different scale that *ρ* would give the same answer on.
+
 <details>
 <summary><b>The math, if you want it: why <i>ρ</i> is bounded in [−1, +1]</b></summary>
 
-This is the **Cauchy–Schwarz inequality** in disguise. For any two random variables *X* and *Y*:
+This is the **Cauchy–Schwarz inequality** in disguise — a classical result from linear algebra that says, roughly, "the covariance of two random variables can't exceed the product of their individual standard deviations." For any two random variables *X* and *Y*:
 
 > |Cov(*X*, *Y*)| ≤ *σ<sub>X</sub> σ<sub>Y</sub>*
 
@@ -88,7 +98,7 @@ Imagine you hold $100k of SPY and want to "diversify" by adding another $100k of
 
 - **Add $100k of XLK** (*ρ* ≈ +0.92 with SPY) — combined $200k position has roughly **1.96×** the dollar risk of the original $100k SPY. Almost no diversification benefit; you doubled exposure, not safety.
 - **Add $100k of XLU** (*ρ* ≈ +0.65) — combined position has roughly **1.82×** the original risk. Better, but still mostly the same risk.
-- **Add $100k of TLT** (*ρ* ≈ −0.31) — combined position has only **1.18×** the original risk. Negative correlation is *better* than uncorrelated for risk reduction — the cross-term in the variance formula now *subtracts* from total variance. The cleanest example of correlation working in your favor.
+- **Add $100k of TLT** (*ρ* ≈ −0.31) — combined position has only **1.18×** the original risk. Negative correlation is *better* than uncorrelated for risk reduction — the cross-term in the variance formula now *subtracts* from total variance. The cleanest example of correlation working in your favor. (This stocks-plus-bonds combination is the seed of the **60/40 portfolio** — the canonical "balanced" allocation of 60% equities / 40% bonds. It earned its reputation precisely because of the negative SPY/TLT correlation we'll formalize in §3.5.)
 
 The 1.96×, 1.82×, 1.18× factors come from the two-asset variance formula in §3.1 — which we'll prove next.
 
@@ -103,7 +113,7 @@ Hold *w<sub>X</sub>* fraction of asset X and *w<sub>Y</sub>* = 1 − *w<sub>X</s
 > *σ<sub>p</sub>²* = *w<sub>X</sub>² σ<sub>X</sub>²* + *w<sub>Y</sub>² σ<sub>Y</sub>²* + 2 *w<sub>X</sub> w<sub>Y</sub> σ<sub>X</sub> σ<sub>Y</sub> ρ*
 
 where:
-- *w<sub>X</sub>*, *w<sub>Y</sub>* — the **portfolio weights** (must sum to 1 for a fully-invested long-only portfolio).
+- *w<sub>X</sub>*, *w<sub>Y</sub>* — the **portfolio weights** (must sum to 1 for a fully-invested long-only portfolio — *long-only* means no short selling, so each weight is between 0 and 1; *fully-invested* means no cash held aside).
 - *σ<sub>X</sub>*, *σ<sub>Y</sub>* — individual asset standard deviations of returns. The formula is **frequency-consistent**: plug in daily σ's and you get a daily σ<sub>p</sub> out; plug in annualized σ's (i.e. daily σ × √252) and you get an annualized σ<sub>p</sub> out. Both σ's must be at the same frequency. The example below plugs in annualized values so the answer comes out in annualized terms directly — the convention used throughout this chapter.
 - *ρ* — the pairwise correlation between *X* and *Y*. Unitless; **the same number at any frequency**, so no scaling needed.
 - *σ<sub>p</sub>²* — the variance of the portfolio's return, in whatever frequency the inputs were.
@@ -213,11 +223,11 @@ The two-asset formula gets unwieldy fast. The general *N*-asset version is one l
 
 > *σ<sub>p</sub>²* = **w**ᵀ **Σ** **w**
 
-where:
+where (a **bold** symbol means a vector or matrix; a non-bold scalar like *σ<sub>p</sub>²* is a single number):
 - **w** — the weight vector (length *N*; sums to 1 for a fully-invested portfolio).
 - **Σ** — the *N* × *N* covariance matrix.
-- **w**ᵀ — the transpose of **w** (a row vector).
-- **w**ᵀ **Σ** **w** — a scalar (a 1×1 matrix).
+- **w**ᵀ — the transpose of **w** (turns the column vector into a row vector; the superscript ᵀ is standard linear-algebra notation).
+- **w**ᵀ **Σ** **w** — a scalar (a 1×1 matrix). Reads as "row vector times matrix times column vector."
 
 This is the formula the notebook used to compute every portfolio vol in §3.3. It's the building block of essentially all modern portfolio theory.
 
@@ -247,9 +257,9 @@ The notebook tabulates several portfolios. Computed numbers from the actual data
 Two things worth pointing out:
 
 1. **60/40 SPY/TLT is the *lowest*-vol portfolio in the table** — about $11k typical-year swing on $100k, vs $19k for all-SPY. The negative SPY/TLT correlation does the work. That's the textbook "balanced portfolio" earning its reputation.
-2. **Equal-weight all 8 has *higher* vol than 60/40** ($14.5k vs $11.3k) — even though it has more assets. The reason: 5/8 of the basket is concentrated in high-vol US equity sectors (XLF and XLE both run ~30% vol). Naive equal-weighting *over-allocates* to the volatile names. Better weighting schemes (risk parity, mean-variance optimization) attempt to fix this — deferred to a later chapter.
+2. **Equal-weight all 8 has *higher* vol than 60/40** ($14.5k vs $11.3k) — even though it has more assets. The reason: 5/8 of the basket is concentrated in high-vol US equity sectors (XLF and XLE both run ~30% vol). Naive equal-weighting *over-allocates* to the volatile names. Better weighting schemes attempt to fix this — *risk parity* (weight each asset so it contributes equal *variance* to the portfolio, not equal dollars) and *mean-variance optimization* (Markowitz's framework: pick weights that maximize expected return for a given variance, or minimize variance for a given expected return). Both deferred to a later chapter.
 
-Real portfolio construction trades off return (which favors equity-heavy) against risk (which favors diversification across asset classes — *and* thoughtful weighting). We'll formalize the return-vs-risk tradeoff with the **Sharpe ratio** in Chapter 4.
+Real portfolio construction trades off return (which favors equity-heavy) against risk (which favors diversification across asset classes — *and* thoughtful weighting). We'll formalize the return-vs-risk tradeoff with the **Sharpe ratio** (a one-number summary of "excess return per unit of volatility") in Chapter 4.
 
 ## 4. Part III — Regime / crisis correlation (the empirical wrinkle)
 
@@ -260,9 +270,9 @@ Parts I and II used a **single** correlation number per pair — the long-run av
 Compute SPY/TLT correlation in a 60-day rolling window through history. Same window length as Ch2's rolling vol, for the same noise-vs-lag balance reason. The notebook plots the resulting time series.
 
 The story it tells:
-- **2007–2019:** sustained negative correlation. TLT genuinely *hedged* SPY — when stocks fell, Treasuries rallied. This is the regime that built the reputation of the 60/40 portfolio (and is what the long-run −0.31 average mostly reflects).
-- **March 2020:** a brief sharp positive spike. During the COVID liquidity crisis everything sold off together — forced deleveraging means even safe assets get sold.
-- **2022 onward:** sustained positive correlation. Both stocks and bonds fell together as rates rose.
+- **2007–2019:** sustained negative correlation. TLT genuinely *hedged* SPY — when stocks fell, Treasuries rallied. This is the regime that built the reputation of the 60/40 portfolio (and is what the long-run −0.31 average mostly reflects). Brackets the **Global Financial Crisis (GFC, 2007–2009)**, when SPY drew down ~55% while TLT rallied sharply.
+- **March 2020:** a brief sharp positive spike during the **COVID-19 crash** (SPY fell ~34% in five weeks as the pandemic shut down global activity). Briefly *everything* sold off together — including Treasuries — because levered investors hit margin calls and had to sell whatever they could to raise cash. That mechanism is called *forced deleveraging*: when a fund's collateral value drops, it must reduce its borrowed positions, and the most liquid assets (often Treasuries) get sold first regardless of fundamentals.
+- **2022 onward:** sustained positive correlation. Both stocks and bonds fell together as the Federal Reserve raised the policy interest rate from ~0% to ~5% over 2022–2023 to combat post-pandemic inflation. Higher rates push down both equity valuations (future cash flows discounted more heavily) and long-bond prices (mechanical inverse relationship), so both fell at once. SPY drew down ~25%, TLT ~30%+. This is what's meant by a "rate shock hitting duration assets" — *duration* being the technical measure of how much a bond's price moves per 1% change in interest rates; long-dated Treasuries have high duration and so are highly rate-sensitive.
 
 **The "bond hedge" that worked for 15 years stopped working — and the regime change happened in months, not years.** The flat line of the static analysis is an *average over genuinely different worlds*.
 
@@ -270,20 +280,22 @@ The story it tells:
 
 A static correlation answers "on a typical day, do these move together?" A more interesting question for risk management: *on the worst days,* do these move together?
 
-The notebook computes correlations conditional on the bottom 5% of SPY days — about 250 days in 20 years, the conventional VaR-territory threshold — and bars them next to the unconditional ("all days") correlations.
+The notebook computes correlations conditional on the bottom 5% of SPY days — about 250 days in 20 years, the conventional **VaR**-territory threshold — and bars them next to the unconditional ("all days") correlations.
+
+> **Value-at-Risk (VaR)** — a risk measure that asks "on a really bad day at the *q*th percentile, how much do I lose?" The 5% VaR is the loss level you'd expect to exceed only 5% of the time. We're not computing VaR here; we're using its conventional 5%-tail threshold to slice the data. Full treatment in a later chapter.
 
 The picture is more nuanced than a clean "everything correlates in stress":
 
 - **TLT** (the bond hedge): all-days *ρ* = −0.31, worst-5%-days *ρ* = −0.23. Still negative but **less so** — TLT's diversification power *weakens* exactly when SPY is in pain. The headline finding for the bond-hedge story.
 - **GLD**: roughly unchanged near zero — gold is genuinely close to independent.
 - **Sector ETFs (XLU, XLE)**: textbook lift — already-positive correlations rise further.
-- **High-correlation sectors (XLK, XLF, XLV)**: *appear* to drop in conditional correlation. This is largely a **statistical artifact** — conditioning on the bottom 5% of SPY truncates SPY's variance, which mechanically shrinks any Pearson correlation involving it. Economic content is small.
+- **High-correlation sectors (XLK, XLF, XLV)**: *appear* to drop in conditional correlation. This is largely a **statistical artifact** — when you condition on a narrow slice of SPY (the worst 5%), SPY's variance inside that slice is mechanically smaller than its full-sample variance. Pearson correlation has *σ<sub>SPY</sub>* in the denominator, so squeezing that denominator's input shrinks the resulting *ρ* even when the underlying co-movement hasn't really changed. This *truncation effect* is a known foot-gun whenever you "condition on a tail." Economic content of the apparent drop is small.
 
 ### 4.3 Calm vs crisis — the heatmap diptych
 
 The cleaner picture lives in the calm-vs-crisis comparison. Two snapshots of the full 8×8 correlation matrix:
-- **Calm:** all of 2017 (the lowest-vol full year in the window).
-- **Crisis:** March–June 2020 (the COVID drawdown and aftermath).
+- **Calm:** all of 2017 (the lowest-vol full year in the window — a year of steady upward drift in SPY with very few large daily moves).
+- **Crisis:** March–June 2020 (the COVID drawdown and aftermath — the ~5-week ~34% selloff plus the early recovery).
 
 In the calm matrix, structure is visible: sector ETFs cluster, TLT and GLD are independent, off-diagonal entries span a wide range. In the crisis matrix, almost every cell sits in the 0.6–0.95 range — the matrix has gone uniformly red. **In a panic, all bets become a single bet.**
 
@@ -333,6 +345,13 @@ Even when *average* correlation is low, two assets may always crash *together*. 
 
 | Term | Meaning | First used |
 |------|---------|-----------:|
+| ETF (Exchange-Traded Fund) | Fund holding a basket of underlying assets that trades like a single stock | §1 |
+| Sector ETF | ETF holding only stocks from one industry sector (XLK, XLF, etc.) | §1 |
+| Treasury bond / TLT | US-government-issued bond; TLT holds 20+ year Treasuries; price moves inversely with rates | §1 |
+| Basis point (bp) | 1/100th of a percent (0.01%) | §2.1 |
+| Cauchy–Schwarz inequality | Linear-algebra result giving \|Cov(*X*, *Y*)\| ≤ *σ<sub>X</sub> σ<sub>Y</sub>*; underlies \|*ρ*\| ≤ 1 | §2.1 |
+| Long-only / fully-invested | No short positions; weights non-negative, sum to 1; no cash | §3.1 |
+| Bold-symbol convention | Bold = vector or matrix; non-bold = scalar | §3.4 |
 | Pearson correlation (*ρ*) | Cov(*X*, *Y*) / (*σ<sub>X</sub> σ<sub>Y</sub>*); unitless, in [−1, +1] | §2.1 |
 | Correlation matrix | *N* × *N* symmetric matrix of pairwise correlations | §2.1 |
 | Covariance matrix (Σ) | *N* × *N* symmetric matrix; diagonal is variances | §1 |
@@ -340,7 +359,16 @@ Even when *average* correlation is low, two assets may always crash *together*. 
 | Portfolio variance / std (*σ<sub>p</sub>*) | Variance / std of the weighted basket return | §3.1 |
 | Diversification benefit | Reduction in portfolio vol below the weighted average of individual vols | §3.1 |
 | Equal-weight portfolio | Every asset gets weight 1/*N* | §3.3 |
-| 60/40 portfolio | Canonical 60% stocks / 40% bonds; classical balanced allocation | §3.5 |
+| 60/40 portfolio | Canonical 60% stocks / 40% bonds; classical balanced allocation | §2.3 |
+| Risk parity | Weighting scheme that equalizes each asset's *variance contribution* (not dollar weight) | §3.5 |
+| Mean-variance optimization | Markowitz framework: pick weights to maximize expected return for a target variance | §3.5 |
+| Sharpe ratio | Excess return per unit of volatility (Ch4 will formalize) | §3.5 |
+| Duration | A bond's price sensitivity to a 1% change in interest rates; long Treasuries have high duration | §4.1 |
+| Forced deleveraging | Levered investors selling liquid assets to meet margin calls during a crash | §4.1 |
+| GFC (Global Financial Crisis) | 2007–2009 banking and housing crash; SPY drew down ~55% | §4.1 |
+| 2022 rate cycle | Fed hikes from ~0% to ~5% to fight post-COVID inflation; stocks and bonds fell together | §4.1 |
+| Value-at-Risk (VaR) | Loss level at a given tail probability (5% VaR = loss exceeded only 5% of days) | §4.2 |
+| Truncation effect | Conditioning on a tail squeezes that variable's variance and shrinks any *ρ* involving it | §4.2 |
 | √*N* rule | Equal-weighted vol of *N* uncorrelated assets is *σ* / √*N* | §3.3 |
 | Diversification floor | When pairwise correlations share value *ρ*, *σ<sub>p</sub>²*/*σ²* → *ρ* as *N* → ∞ | §3.3 |
 | Systematic risk | The risk that *can't* be diversified away | §3.3 |
