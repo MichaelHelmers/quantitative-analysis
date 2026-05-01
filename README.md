@@ -21,13 +21,13 @@ The path is one coherent sequence aimed at a DIY quant who eventually wants to d
 | # | Chapter | Topic |
 |---|---------|-------|
 | 04 | [`04-expected-returns`](./04-expected-returns) | Estimating expected returns: historical mean, shrinkage, and why estimating return is the hard problem in finance. |
-| 05 | _coming next_ | Risk metrics: drawdown, Value at Risk, and the Sharpe ratio — path-dependent risk and risk-adjusted return. |
+| 05 | [`05-risk-metrics`](./05-risk-metrics) | Risk metrics: drawdown, VaR / CVaR, and the Sharpe ratio — three flavors of risk metric, with honest CIs that show two strategies whose point Sharpes differ by 0.2 are statistically indistinguishable at 20-year sample sizes. |
 
 ### Part 3 — Portfolio Construction
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 06 | _planned_ | Portfolio construction: efficient frontier, mean-variance optimization, and risk parity. |
+| 06 | _coming next_ | Portfolio construction: efficient frontier, mean-variance optimization, and risk parity. |
 
 ### Part 4 — Modeling Returns
 

@@ -27,6 +27,8 @@ use adjusted close for return calculations.
 to a yearly basis. For mean returns, multiply by ~252 trading days; for
 volatility, multiply by √252 (see *√t rule*).
 
+**Annualized Sharpe** *(Ch. 5)* — A Sharpe ratio expressed on a yearly basis. For daily-return Sharpe, multiply by **√252** (not 252) — the numerator scales by 252 and the denominator by √252, so the ratio scales by 252 / √252 = √252.
+
 **Autocorrelation (*ρ<sub>k</sub>*)** *(Ch. 2)* — The correlation of a series
 with a lagged copy of itself: *ρ<sub>k</sub>* = Cov(*X<sub>t</sub>*,
 *X<sub>t−k</sub>*) / Var(*X<sub>t</sub>*). Near zero for daily returns, but
@@ -51,6 +53,8 @@ recent trough. Mirrors *bear market*.
 
 ## C
 
+**Calmar ratio** *(Ch. 5, named only)* — A risk-adjusted-return ratio that uses absolute max drawdown in the denominator instead of vol. Penalizes path risk directly; complementary to Sharpe rather than a replacement.
+
 **Compounding** *(Ch. 1)* — The fact that multi-period simple returns
 *multiply* rather than add: a 5-day return is `(1 + r₁)(1 + r₂)…(1 + r₅) − 1`.
 This is why log returns are convenient — they add.
@@ -61,10 +65,14 @@ correlations *change* in stress regimes — though Pearson conditional
 correlation suffers from a truncation artifact when conditioning on extreme
 values, so the heatmap-diptych approach (§4.3) is often preferred.
 
+**Conditional VaR (CVaR)** *(Ch. 5)* — Expected loss *given* that the loss exceeds the VaR threshold: *CVaR<sub>α</sub>* = − E[*r* | *r* ≤ *Q<sub>α</sub>*(*r*)]. Synonym: **Expected Shortfall (ES)**. Always ≥ VaR by construction. Captures the *shape* of the tail past the threshold; VaR alone doesn't.
+
 **Confidence interval** *(Ch. 4)* — A range around a point estimate that
 contains the true population value with stated probability under repeated
 sampling. *μ̂* ± 1.96 · SE gives a 95% CI under approximate normality of
 the sample mean.
+
+**Confidence level (α)** *(Ch. 5)* — In VaR / CVaR usage, the tail probability the metric refers to. "5% VaR" means the worst-5% threshold. Smaller α means deeper into the tail. Distinct from the *confidence level* in a CI — opposite sign convention (95% CI ↔ α = 0.05).
 
 **Correction** *(Ch. 1)* — A market decline of roughly 10–20% from a recent
 peak. Steeper sustained declines are called *bear markets*.
@@ -96,6 +104,8 @@ points). The default prior in James-Stein shrinkage applied to a basket.
 
 ## D
 
+**Delta method** *(Ch. 5)* — First-order Taylor approximation used to derive the standard error of a function of estimators (e.g., Sharpe = *μ̂* / *σ̂*) from the SEs of the inputs. The Ch. 5 §4.3 derivation gives *SE(Sharpe)* ≈ √((1 + Sharpe²/2) / N) under normality.
+
 **Distribution** *(Ch. 1)* — The shape describing how often each value occurs
 in a dataset. For a return series, the distribution answers "what fraction of
 days had a return near each level."
@@ -113,9 +123,7 @@ common value *ρ*, the equal-weighted portfolio variance ratio
 Adjusted close prices fold dividends back into historical prices so that
 returns reflect total holder earnings.
 
-**Drawdown** *(Ch. 1)* — The peak-to-trough decline in price over some window,
-usually expressed as a percent. *Max drawdown* — the worst such decline — is
-a standard risk metric.
+**Drawdown** *(Ch. 1, formalized Ch. 5)* — How far below the running peak the price currently sits: *DD*(*t*) = (*P*(*t*) − *P*<sub>peak</sub>(*t*)) / *P*<sub>peak</sub>(*t*). Always ≤ 0 in our negative-decimal convention. **Max drawdown (MDD)** — the most negative *DD*(*t*) over a window — is the headline path-risk metric (Ch. 5 §2).
 
 ## E
 
@@ -147,6 +155,10 @@ deferred topic.
 **Excess kurtosis** *(Ch. 2)* — Kurtosis minus 3, so the normal-distribution
 benchmark equals zero. Positive values mean tails heavier than the normal
 predicts.
+
+**Excess return** *(Ch. 5)* — Asset return minus the risk-free rate: *r*<sub>excess,t</sub> = *r<sub>t</sub>* − *r*<sub>f,t</sub>. The compensation for taking risk; the input to Sharpe-style metrics. Earning the risk-free rate isn't compensation for risk — you could have it without taking any.
+
+**Expected Shortfall (ES)** *(Ch. 5)* — Synonym for **Conditional VaR (CVaR)**.
 
 **Expected value (*E*[·])** *(Ch. 2)* — The average of the bracketed quantity
 over the data. For a sample of *n* observations, *E*[*x*] = (*x*<sub>1</sub> +
@@ -189,6 +201,8 @@ factor-models chapter.
 **Histogram** *(Ch. 1)* — A bar chart that buckets observations into ranges
 (*bins*) and draws a bar whose height shows how many observations fall in
 each bin. The visual representation of an empirical distribution.
+
+**Historical VaR** *(Ch. 5)* — VaR computed empirically as a quantile of the observed return distribution: *VaR<sub>α</sub>* = − *Q<sub>α</sub>*(*r*). No distributional assumption. Preferred to Gaussian VaR for daily equity tails at α ≤ 1% (where the fat-tail premium materially bites).
 
 ## I
 
@@ -238,6 +252,8 @@ multi-period math simpler.
 **Mean (μ)** *(Ch. 1)* — The arithmetic average. Sum the values, divide by
 the count.
 
+**Max drawdown (MDD)** *(Ch. 5)* — The most negative drawdown observed over a window: *MDD* = min<sub>t</sub> *DD*(*t*). The headline path-risk metric. Pair with **recovery time** for the duration coordinate.
+
 ## N
 
 **Natural logarithm (`ln`)** *(Ch. 1)* — Logarithm base *e* (≈ 2.71828).
@@ -254,6 +270,8 @@ known to underestimate the frequency of extreme moves.
 **H**igh, **L**ow, **C**lose, **V**olume.
 
 ## P
+
+**Parametric (Gaussian) VaR** *(Ch. 5)* — VaR computed assuming returns are normal: *VaR<sub>α</sub>* = − (*μ* + *z<sub>α</sub>* · *σ*). Approximately matches historical VaR at conventional 5% levels but underestimates badly in the deep tail (1%, 0.5% — see *tail premium*).
 
 **Pearson correlation (*ρ*)** *(Ch. 3)* — *ρ<sub>XY</sub>* = Cov(*X*, *Y*) /
 (*σ<sub>X</sub> σ<sub>Y</sub>*). The unitless, scale-free version of
@@ -301,6 +319,8 @@ qualitative judgment about a company's prospects.
 Distinguished in Ch. 4 from "expected return" because it's the *data* used
 to estimate, not the estimate itself.
 
+**Recovery time** *(Ch. 5)* — Days between the peak preceding a drawdown and the first new peak after. The duration coordinate of path risk; complements MDD.
+
 **Regime** *(Ch. 2)* — A persistent macro-state of the market with
 characteristic statistical properties (typical vol level, trend direction).
 Volatility clustering is a manifestation of regime persistence; correlation
@@ -316,6 +336,8 @@ future return — not specifically "the chance of loss." Most often quantified
 as *volatility* (std dev of returns); Ch. 2's "What we mean by risk" framing
 breaks risk into magnitude / persistence / path / correlation flavors.
 
+**Risk-free rate (*r<sub>f</sub>*)** *(Ch. 5)* — The yield on a (effectively) zero-default-risk asset; **T-bill** yield in practice. Subtracted from asset returns to compute *excess returns*. Use the rolling daily series, not a constant — the 20y window spans 0% (ZIRP) and 5% rate regimes.
+
 **Rolling correlation** *(Ch. 3)* — Pairwise correlation computed over a
 sliding window of recent observations. Reveals time-variation that a
 single-number long-run correlation hides — e.g., the SPY/TLT correlation
@@ -324,6 +346,8 @@ flipping signs across regimes.
 **Rolling window** *(Ch. 2)* — A sliding subset of a time series used to
 compute a statistic at each point in time. A rolling-window standard deviation
 visualizes how volatility changes through time.
+
+**Running peak** *(Ch. 5)* — The maximum of a price series up to and including time *t*: *P*<sub>peak</sub>(*t*) = max<sub>*s* ≤ *t*</sub> *P*(*s*). The reference level against which drawdown is measured.
 
 ## S
 
@@ -338,6 +362,8 @@ population mean. Unbiased; standard error scales like 1/√N.
 **Second moment** *(Ch. 2)* — The variance of a distribution. Daily returns
 are *not* second-moment-stationary — the rolling-vol plot is the proof.
 
+**Sharpe ratio** *(Ch. 5)* — Mean excess return divided by excess-return volatility: *Sharpe* = *μ*<sub>excess</sub> / *σ*<sub>excess</sub>. The simplest risk-adjusted-return metric. Annualizes by **× √252** (not × 252) for daily data. Compare Sharpes only with their CIs (Ch. 5 §4.3) — they're noisier than the headline number suggests.
+
 **Shrinkage** *(Ch. 4)* — Pulling a noisy estimate toward a prior to reduce
 mean-squared error at the cost of a small bias. Applied to expected-return
 estimates in Ch. 4; used in production portfolio construction in Ch. 6.
@@ -348,6 +374,8 @@ can distinguish the estimate from zero.
 
 **Simple return** *(Ch. 1)* — `Pₜ / Pₜ₋₁ − 1`. The return number a brokerage
 statement reports.
+
+**Sortino ratio** *(Ch. 5, named only)* — A Sharpe variant that uses *downside-only* deviation in the denominator, so upside vol isn't penalized. Useful when return distributions are asymmetric.
 
 **Split** *(Ch. 1)* — A re-denomination of a company's shares (e.g., 2-for-1:
 each existing share becomes two shares of half the price). No economic value
@@ -378,8 +406,12 @@ in the extreme tails of the joint distribution. Standard linear correlation
 can't capture this. Named in Ch. 3 as a deferred flavor of correlation risk;
 treatment alongside EVT and copulas much later.
 
+**Tail premium** *(Ch. 5)* — The gap between historical VaR and Gaussian VaR; the quantitative restatement of Ch. 2's fat-tail finding. *Quantile-dependent*: ~1.0× at 5%, ~1.3× at 1%, ~1.5× at 0.5%. Fat tails are a divergence in *shape* in the deep tail, not a uniform multiplier.
+
 **Tails** *(Ch. 1)* — The far-left and far-right ends of a distribution,
 where rare extreme values live. See also *fat tails*.
+
+**T-bill** *(Ch. 5)* — Treasury bill: short-term US Treasury debt (4-, 13-, or 26-week maturities). The standard real-world proxy for "risk-free in dollar terms." Yfinance ticker `^IRX` reports the annualized 13-week T-bill yield in percent.
 
 **t-statistic** *(Ch. 4)* — An estimate divided by its standard error.
 Roughly, the number of standard errors away from zero. |t| > 2 is the
@@ -391,6 +423,10 @@ exchange (e.g., `SPY`, `AAPL`, `BRK-B`).
 **Trading day** *(Ch. 1)* — A day on which the market in question is open.
 For U.S. equities, there are roughly **252** per year (365 minus weekends and
 ~9 holidays).
+
+## U
+
+**Underwater curve** *(Ch. 5)* — A time-series plot of drawdown (*DD*(*t*) vs time). Visualizes how long the price path spent "submerged" below prior peaks; the shape conveys both depth and recovery.
 
 ## V
 
@@ -409,7 +445,11 @@ characteristic pattern that GARCH models attempt to capture formally.
 A liquidity indicator; large moves on light volume are read differently than
 large moves on heavy volume.
 
+**Value at Risk (VaR)** *(Ch. 5)* — A loss threshold: *VaR<sub>α</sub>* = − *Q<sub>α</sub>*(*r*). "5% VaR of 1.8%" means losses of at least 1.8% on 5% of days. Blind to tail shape past the threshold — pair with *CVaR*.
+
 ## Z
+
+**ZIRP** *(Ch. 5)* — Zero-Interest-Rate Policy era when the risk-free rate sat near 0%. In US data: roughly late 2008–2015 and 2020–2021.
 
 **z-score** *(Ch. 2)* — *z<sub>t</sub>* = (*r<sub>t</sub>* − *μ*) / *σ*. A
 return expressed in units of standard deviations from the mean. Used in
