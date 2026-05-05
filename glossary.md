@@ -44,6 +44,10 @@ from a recent peak. The threshold is a convention, not a law.
 the true population value it's trying to estimate. An *unbiased* estimator
 has bias = 0. The sample mean is unbiased for the population mean.
 
+**Black-Litterman** *(Ch. 6, named only)* — Bayesian framework that combines an equilibrium prior on expected returns with an investor's subjective views to produce a stable posterior used as MVO input. The standard institutional response to mean-variance instability when *r<sub>f</sub>*-based shrinkage isn't enough.
+
+**Block bootstrap** *(Ch. 6)* — Bootstrap resampling that draws *blocks* of consecutive observations rather than single points, preserving short-horizon dependence (volatility clustering, autocorrelation). Block length is a hyperparameter; 21 days is a common default for daily financial data.
+
 **Bias–variance tradeoff** *(Ch. 4)* — The principle that accepting a small
 bias in an estimator can sometimes reduce its overall mean-squared error.
 Underlies shrinkage estimators and a huge swath of statistics and ML.
@@ -52,6 +56,8 @@ Underlies shrinkage estimators and a huge swath of statistics and ML.
 recent trough. Mirrors *bear market*.
 
 ## C
+
+**Capital Market Line (CML)** *(Ch. 6)* — In (σ, μ) space, the straight line through the risk-free point (0, *r<sub>f</sub>*) and the **tangency portfolio**. Every Sharpe-maximizing investor's holdings sit on this line — risk-averse investors blend in *r<sub>f</sub>*, risk-tolerant investors lever the tangency portfolio. The geometric realization of the **two-fund separation theorem**.
 
 **Calmar ratio** *(Ch. 5, named only)* — A risk-adjusted-return ratio that uses absolute max drawdown in the denominator instead of vol. Penalizes path risk directly; complementary to Sharpe rather than a replacement.
 
@@ -127,10 +133,15 @@ returns reflect total holder earnings.
 
 ## E
 
+**Efficient frontier** *(Ch. 6)* — The set of portfolios offering the lowest variance for each achievable return target — equivalently, the upper branch of the (σ, μ) curve traced by the mean-variance program. Every individual asset sits *inside* the frontier (diversification dominance); the leftmost point is the **GMV**; the *tangency point* (where the **CML** kisses the curve) is the maximum-Sharpe portfolio.
+
+**Equal Risk Contribution (ERC)** *(Ch. 6)* — Synonym for **risk parity**. The portfolio chosen so that every asset's *RC*<sub>i</sub> = *σ*<sub>p</sub>/*K*. No closed form; solved numerically.
+
 **Equal-weight portfolio** *(Ch. 3)* — A portfolio in which every asset has
 the same weight 1/*N*. The simplest non-trivial weighting scheme; useful as
-a benchmark, but tends to over-allocate to high-volatility assets compared
-with risk-aware schemes.
+a benchmark, but tends to over-allocate *risk* to high-volatility assets compared with risk-aware schemes — see **risk contribution** for the audit.
+
+**Estimation error / instability** *(Ch. 6)* — The effect of input noise (μ̂, Σ̂) on optimization output (weights). Mean-variance amplifies it through Σ⁻¹: small differences in expected returns get levered into very different "optimal" weights. Demonstrated by bootstrap resamples whose tangency XLK weight ranges from 0% to 100% on the same 20-year data.
 
 **Equilibrium / required return** *(Ch. 4)* — The expected return an asset
 *should* have given its risk and factor exposures. Named in Ch. 4 as a
@@ -183,6 +194,8 @@ long-run unconditional mean. Named in Ch. 4 as a deferred flavor; formalized
 in Ch. 8 and Ch. 11–12.
 
 ## G
+
+**Global Minimum Variance (GMV) portfolio** *(Ch. 6)* — The lowest-variance portfolio achievable from a given Σ — the leftmost point on the **efficient frontier**. Closed-form unconstrained solution: **w**<sub>GMV</sub> = **Σ**⁻¹**1** / (**1**ᵀ**Σ**⁻¹**1**). Depends only on Σ, not μ. Concentrates in low-vol, well-diversifying assets (e.g., TLT, XLV, GLD on the curriculum's 8-ticker basket).
 
 **GARCH** *(Ch. 2)* — Generalized AutoRegressive Conditional
 Heteroskedasticity. A family of time-series models that explicitly captures
@@ -240,6 +253,10 @@ heavy a distribution's tails are. Equals 3 for a normal distribution; report
 **Lag (*k*)** *(Ch. 2)* — The number of periods by which a series is shifted
 when computing autocorrelation.
 
+**Ledoit-Wolf shrinkage** *(Ch. 6, named only)* — Shrinkage estimator for the covariance matrix Σ̂, the analog of Ch. 4's James-Stein shrinkage on μ̂. Pulls Σ̂ toward a structured target (typically the diagonal) by a data-driven amount. Reduces the off-diagonal noise that Σ⁻¹ otherwise amplifies.
+
+**Long-only constraint** *(Ch. 6)* — Optimization restriction *w*<sub>i</sub> ≥ 0 — no short selling. Acts as a statistical regularizer on top of its business meaning: caps the levering effect of Σ⁻¹ on noisy μ̂, often at near-zero vol cost on diversified baskets.
+
 **Leptokurtic** *(Ch. 2)* — Technical adjective for "fat-tailed": having
 excess kurtosis greater than zero.
 
@@ -251,6 +268,10 @@ multi-period math simpler.
 
 **Mean (μ)** *(Ch. 1)* — The arithmetic average. Sum the values, divide by
 the count.
+
+**Marginal risk contribution (MRC)** *(Ch. 6)* — *MRC*<sub>i</sub> = (**Σ****w**)<sub>i</sub> / *σ*<sub>p</sub>. The partial derivative ∂*σ*<sub>p</sub>/∂*w*<sub>i</sub> — how much portfolio vol moves when asset *i*'s weight is nudged.
+
+**Mean-variance optimization (MVO)** *(Ch. 6)* — Markowitz's 1952 framework: pick portfolio weights to optimize a tradeoff between portfolio mean and variance, subject to budget and (optionally) long-only constraints. Famously *unstable* on noisy inputs — see **estimation error**.
 
 **Max drawdown (MDD)** *(Ch. 5)* — The most negative drawdown observed over a window: *MDD* = min<sub>t</sub> *DD*(*t*). The headline path-risk metric. Pair with **recovery time** for the duration coordinate.
 
@@ -336,6 +357,10 @@ future return — not specifically "the chance of loss." Most often quantified
 as *volatility* (std dev of returns); Ch. 2's "What we mean by risk" framing
 breaks risk into magnitude / persistence / path / correlation flavors.
 
+**Risk contribution (RC)** *(Ch. 6)* — *RC*<sub>i</sub> = *w*<sub>i</sub> · *MRC*<sub>i</sub>. Asset *i*'s share of total portfolio vol; the *RC*<sub>i</sub> sum to *σ*<sub>p</sub>. Can be negative for assets that *remove* risk via negative correlation (e.g., TLT in an equity-heavy basket).
+
+**Risk parity** *(Ch. 6)* — Portfolio chosen so that every asset's risk contribution is equal: *RC*<sub>i</sub> = *σ*<sub>p</sub>/*K* for all *i*. Synonym: **Equal Risk Contribution (ERC)**. Depends on Σ only, not μ — the standard practitioner response to mean-variance instability when μ-estimates aren't trustworthy. Generalizes the 60/40 instinct ("over-weight the low-vol asset to balance risk") to *K* assets.
+
 **Risk-free rate (*r<sub>f</sub>*)** *(Ch. 5)* — The yield on a (effectively) zero-default-risk asset; **T-bill** yield in practice. Subtracted from asset returns to compute *excess returns*. Use the rolling daily series, not a constant — the 20y window spans 0% (ZIRP) and 5% rate regimes.
 
 **Rolling correlation** *(Ch. 3)* — Pairwise correlation computed over a
@@ -411,6 +436,10 @@ treatment alongside EVT and copulas much later.
 **Tails** *(Ch. 1)* — The far-left and far-right ends of a distribution,
 where rare extreme values live. See also *fat tails*.
 
+**Tangency portfolio** *(Ch. 6)* — The point on the efficient frontier with the maximum Sharpe — equivalently, the portfolio whose ray from (0, *r<sub>f</sub>*) is tangent to the frontier. Unconstrained closed form: **w**<sub>tan</sub> ∝ **Σ**⁻¹ (**μ** − *r<sub>f</sub>***1**). The Σ⁻¹ in the formula is precisely what makes mean-variance unstable on noisy μ̂.
+
+**Two-fund separation theorem** *(Ch. 6, named only)* — Under mean-variance optimization with a risk-free asset, every Sharpe-maximizing investor holds some mix of *r<sub>f</sub>* and the **tangency portfolio**. Risk aversion determines the mix; risky composition is the same for everyone.
+
 **T-bill** *(Ch. 5)* — Treasury bill: short-term US Treasury debt (4-, 13-, or 26-week maturities). The standard real-world proxy for "risk-free in dollar terms." Yfinance ticker `^IRX` reports the annualized 13-week T-bill yield in percent.
 
 **t-statistic** *(Ch. 4)* — An estimate divided by its standard error.
@@ -444,6 +473,8 @@ characteristic pattern that GARCH models attempt to capture formally.
 **Volume** *(Ch. 1)* — Number of shares (or contracts) traded in a period.
 A liquidity indicator; large moves on light volume are read differently than
 large moves on heavy volume.
+
+**Volatility parity** *(Ch. 6, named only)* — Simpler cousin of risk parity that weights by 1/σ<sub>i</sub> ignoring correlations. Faster to compute and often comparable to ERC when correlations are low; differs meaningfully when there are strong cross-asset correlations.
 
 **Value at Risk (VaR)** *(Ch. 5)* — A loss threshold: *VaR<sub>α</sub>* = − *Q<sub>α</sub>*(*r*). "5% VaR of 1.8%" means losses of at least 1.8% on 5% of days. Blind to tail shape past the threshold — pair with *CVaR*.
 

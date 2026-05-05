@@ -27,7 +27,7 @@ The path is one coherent sequence aimed at a DIY quant who eventually wants to d
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 06 | _coming next_ | Portfolio construction: efficient frontier, mean-variance optimization, and risk parity. |
+| 06 | [`06-portfolio-construction`](./06-portfolio-construction) | Portfolio construction: the efficient frontier, the tangency / max-Sharpe portfolio, and risk parity — three philosophies (minimize risk, maximize Sharpe, equalize risk contributions) plus the instability lesson that justifies the third. |
 
 ### Part 4 — Modeling Returns
 

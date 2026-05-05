@@ -1,6 +1,7 @@
 jupyter
 numpy
 pandas
+pandas-stubs
 matplotlib
 yfinance
 scipy
