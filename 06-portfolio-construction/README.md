@@ -10,7 +10,7 @@ Three philosophies, three sections, one hard lesson woven through them.
 
 The hard lesson lives in **§5**: mean-variance optimization is *unstable*. Small changes in the inputs (especially μ̂) produce large changes in the weights. This is not a flaw in the optimizer — it's the optimizer's job to spot small differences in expected return per unit of risk and lever them. Inverse covariance Σ⁻¹ is what does the levering, and on noisy inputs it amplifies noise into wildly different "optimal" portfolios. Chapter 4 was inserted into the curriculum specifically so this chapter could pay it off honestly: shrinkage on μ̂ is *the* stabilizer for MVO. Risk parity is the more dramatic answer — *don't depend on μ̂ at all*.
 
-The chapter uses the same 8-ticker basket as Chapters 3–5 — **SPY, TLT, GLD, XLK, XLF, XLE, XLV, XLU** — over 20 years, plus the rolling daily *r<sub>f</sub>* from `^IRX` introduced in Ch5. No new packages.
+The chapter uses the same 8-ticker basket as Chapters 3–5 — **SPY, TLT, GLD, XLK, XLF, XLE, XLV, XLU** — over 20 years, plus the rolling daily **risk-free rate** *r<sub>f</sub>* (the return on a near-zero-risk asset, our proxy for "what cash earns") from `^IRX` (the Yahoo ticker for the **13-week U.S. Treasury bill** yield — short-term U.S. government debt, the standard real-world stand-in for *r<sub>f</sub>*; ranged from near-0% in the post-2008 low-rate decade to ~5% by 2024 over our window) introduced in Ch5. No new packages.
 
 ---
 
@@ -57,7 +57,9 @@ Take SPY and TLT. Sweep *w* (the SPY weight) from 0 to 1; the TLT weight is just
 > *σ*<sub>p</sub>² = *w*² *σ*<sub>SPY</sub>² + (1−*w*)² *σ*<sub>TLT</sub>² + 2 *w* (1−*w*) *ρ* *σ*<sub>SPY</sub> *σ*<sub>TLT</sub>
 
 where:
-- *w* — fraction of capital in SPY. **Units:** dimensionless, in [0, 1] under long-only.
+- *w* — fraction of capital in SPY. **Units:** dimensionless, in [0, 1] under long-only (i.e. no short-selling — see §3.2 foot-gun).
+- *μ*<sub>SPY</sub>, *μ*<sub>TLT</sub> — annualized mean returns of SPY and TLT (the per-asset expected returns from Ch4).
+- *σ*<sub>SPY</sub>, *σ*<sub>TLT</sub> — annualized standard deviations (volatilities) of SPY and TLT (per-asset risk from Ch2).
 - *μ*<sub>p</sub>, *σ*<sub>p</sub> — portfolio mean return and standard deviation. **Units:** decimal per period; we annualize for plotting.
 - *ρ* — SPY/TLT correlation. Ch3 reported ρ ≈ −0.31 over the 20y window.
 
@@ -85,10 +87,11 @@ From Ch3, with one line of refresh:
 > *σ*<sub>p</sub>² = **w**ᵀ**Σ****w**
 
 where:
-- **w** — vector of portfolio weights, length *K*. **w**ᵀ**1** = 1 always (full investment); long-only adds *w*<sub>i</sub> ≥ 0.
+- **w** — vector of portfolio weights, length *K* (here *K* = 8 assets). **w**ᵀ**1** = 1 always (full investment — i.e. fractions of capital sum to 100%); long-only adds *w*<sub>i</sub> ≥ 0.
 - **μ** — *K*-vector of expected returns (annualized).
 - **Σ** — *K* × *K* covariance matrix of returns (annualized; symmetric, positive-definite).
 - *μ*<sub>p</sub>, *σ*<sub>p</sub>² — portfolio mean and variance.
+- *μ*<sub>target</sub> (used below) — a chosen expected-return level the portfolio must hit; varying it traces out the frontier.
 
 The mean-variance program is
 
@@ -101,7 +104,7 @@ subject to  wᵀ μ = μ_target  (return target — only present for the frontie
 
 ### 3.2 The Global Minimum Variance portfolio
 
-Drop the return-target constraint and just minimize variance subject to **w**ᵀ**1** = 1. The unconstrained problem has a closed-form Lagrangian solution:
+Drop the return-target constraint and just minimize variance subject to **w**ᵀ**1** = 1. The unconstrained problem has a closed-form **Lagrangian** solution (Lagrange multipliers are the standard tool for minimizing a function under equality constraints — the multiplier λ that appears in the derivation below encodes the marginal cost of the "weights sum to 1" constraint, and drops out at the end):
 
 > **w**<sub>GMV</sub> = **Σ**⁻¹**1** / (**1**ᵀ**Σ**⁻¹**1**)
 
@@ -110,7 +113,7 @@ where:
 - **1** — the all-ones vector of length *K*. (Reading: "Σ⁻¹ applied to **1**, normalized so the weights sum to 1.")
 - **w**<sub>GMV</sub> — the unconstrained minimum-variance weights.
 
-> **Foot-gun: the unconstrained GMV can short-sell.** Some assets may receive negative weights. We compute both the unconstrained (analytic) version and the long-only (numerical) version below. Most practical desks default to long-only.
+> **Foot-gun: the unconstrained GMV can short-sell.** Some assets may receive *negative* weights. **Short-selling** means borrowing an asset to sell it now and buying it back later — you profit if the price falls, and a negative weight is the math's way of saying "go short by this fraction of capital." A long-only portfolio forbids this (every *w*<sub>i</sub> ≥ 0). We compute both the unconstrained (analytic) version and the long-only (numerical) version below. Most practical desks default to long-only.
 
 <details>
 <summary>Derivation of the unconstrained GMV formula</summary>
@@ -139,7 +142,7 @@ Two things to notice:
 
 ### 3.3 Tracing the frontier
 
-The frontier itself is what you get when you keep the return-target constraint and sweep *μ*<sub>target</sub> from the lowest single-asset mean to the highest. For each target, solve numerically:
+The frontier itself is what you get when you keep the return-target constraint and sweep *μ*<sub>target</sub> from the lowest single-asset mean to the highest. For each target, solve numerically (we use **SLSQP** — Sequential Least-Squares Programming, a constrained nonlinear optimizer in `scipy.optimize` that handles equality + inequality constraints together; treat it as a black-box minimizer that respects our sum-to-1 and ≥ 0 rules):
 
 ```
 minimize    wᵀ Σ w
@@ -154,7 +157,7 @@ Plot the resulting (σ, μ) points — that's the frontier. Overlay the eight in
 - **The GMV is the leftmost point on the frontier.** Anything below it on the curve (same σ, lower μ) is *dominated* and conventionally not called "efficient."
 - **The frontier curves up and to the right** — to chase higher expected return, you must accept higher vol. There is no free lunch *above* the frontier; everything inside is a free lunch *vs. the diagonal*.
 
-Sample frontier points from the notebook (long-only, JS-shrunk means):
+Sample frontier points from the notebook (long-only, *raw* means — at this sample size JS-shrunk and raw are nearly identical, see §1):
 
 | μ_target | Achievable σ | Notes |
 |---|---|---|
@@ -175,13 +178,13 @@ That last row — "to chase 13.6% expected return on this basket, you accept 18.
 
 ### 4.1 Adding the risk-free asset
 
-A real-world investor has an option no point on the frontier captures: hold cash (or T-bills) at the risk-free rate. With *r<sub>f</sub>* available, an investor can hold any *combination* of *r<sub>f</sub>* and a risky portfolio **w**, and the combined position sits on a **straight line** in (σ, μ) space passing through (0, *r<sub>f</sub>*) and (σ<sub>w</sub>, μ<sub>w</sub>).
+A real-world investor has an option no point on the frontier captures: hold cash (or **T-bills** — short-term U.S. Treasury debt, the conventional "risk-free" asset because they are backed by the U.S. government and mature in days/weeks/months, leaving little time for anything to go wrong) at the risk-free rate *r<sub>f</sub>*. With *r<sub>f</sub>* available, an investor can hold any *combination* of *r<sub>f</sub>* and a risky portfolio **w**, and the combined position sits on a **straight line** in (σ, μ) space passing through (0, *r<sub>f</sub>*) and (σ<sub>w</sub>, μ<sub>w</sub>).
 
 The slope of that line is
 
 > (*μ*<sub>w</sub> − *r<sub>f</sub>*) / *σ*<sub>w</sub>
 
-— the **Sharpe ratio of w**.
+— the **Sharpe ratio of w** (Ch5: excess return per unit of vol; bigger = more reward per unit of risk).
 
 The investor who wants the highest Sharpe picks the **w** whose line has the steepest slope. Geometrically, that line is the one **tangent to the efficient frontier from (0, *r<sub>f</sub>*)**. The tangent point is the **tangency portfolio**, also called the **maximum-Sharpe portfolio**.
 
@@ -192,7 +195,9 @@ The tangent line itself, extended out beyond the tangency point (mixing in lever
 > **w**<sub>tan</sub> ∝ **Σ**⁻¹ (**μ** − *r<sub>f</sub>* **1**),   normalized so **w**<sub>tan</sub>ᵀ **1** = 1.
 
 where:
-- (**μ** − *r<sub>f</sub>***1**) — the vector of expected *excess* returns (Ch5's excess returns, in vector form).
+- **w**<sub>tan</sub> — the tangency (max-Sharpe) portfolio weights, length *K*.
+- (**μ** − *r<sub>f</sub>***1**) — the vector of expected **excess returns** — each asset's expected return *minus* the risk-free rate. This is the "extra you earn for taking risk in asset *i*"; Ch5 used the same scalar quantity in the Sharpe numerator.
+- **1** — the all-ones vector of length *K*; *r<sub>f</sub>***1** is just *r<sub>f</sub>* repeated *K* times so it can be subtracted from the asset-mean vector.
 - **Σ**⁻¹ — the inverse covariance matrix.
 - The result is divided by **1**ᵀ **Σ**⁻¹ (**μ** − *r<sub>f</sub>***1**) to make the weights sum to 1.
 
@@ -215,13 +220,13 @@ Numerically maximize Sharpe with sum-to-1 + non-negativity constraints (`scipy.o
 |---|---|---|---|---|---|---|---|---|
 | Long-only tangency weight | 0.00 | 0.23 | 0.29 | 0.34 | 0.00 | 0.00 | 0.15 | 0.00 |
 
-Vol ≈ **11.2%**, in-sample annualized Sharpe ≈ **0.73**.
+Vol ≈ **11.2%**, **in-sample** annualized Sharpe ≈ **0.73**. ("In-sample" means the Sharpe is computed on the *same* 20-year data the optimizer used to pick the weights — there's no separate hold-out period yet, so this number is a best case. Exercise 4 introduces the out-of-sample version, and Ch13 will treat that distinction systematically.)
 
 Reactions worth flagging:
 
 - **SPY is dropped entirely.** The optimizer doesn't care that SPY is "the broad market" and XLK is one sector. It cares that XLK has higher μ at not-much-higher σ over this window. SPY's μ ≈ 10.3% is dominated, in optimization terms, by XLK's 14.8%.
 - **Half the basket gets zero weight.** XLF, XLE, and XLU are squeezed out — their Sharpe-per-dollar is too low relative to the alternatives.
-- **The 0.73 in-sample Sharpe is roughly +0.21 above 60/40's 0.52.** *Hold this number lightly* — §4.5 puts a CI on it, and §5 shows the *weights* themselves are wildly sample-dependent.
+- **The 0.73 in-sample Sharpe is roughly +0.21 above 60/40's 0.52.** ("60/40" is the canonical retail balanced portfolio — 60% equities, 40% bonds; here we use 60% SPY + 40% TLT, daily-rebalanced. It's the standard real-world baseline a Sharpe-maximizing strategy has to beat.) *Hold this number lightly* — §4.5 puts a CI on it, and §5 shows the *weights* themselves are wildly sample-dependent.
 
 ### 4.4 The Capital Market Line, drawn
 
@@ -230,7 +235,7 @@ The notebook plots the efficient frontier from §3, then adds:
 - The eight individual assets as scatter points.
 - The **tangency portfolio** as a marker on the frontier.
 - The **CML** — a straight line through (0, *r<sub>f</sub>*) and the tangency marker, extending beyond it.
-- The **60/40, EW8, and GMV-LO** portfolios for comparison.
+- The **60/40, EW8, and GMV-LO** portfolios for comparison. (EW8 = "equal-weight 8" — 1/8 of capital in each of the eight tickers, the naive diversification baseline from Ch3. GMV-LO = the long-only Global Minimum Variance portfolio from §3.2.)
 
 Visually, the CML is everywhere above the frontier except at the tangency point itself, where it kisses the curve. That picture is what "best Sharpe" *means* — the steepest line you can draw from (0, *r<sub>f</sub>*) to anywhere achievable.
 
@@ -257,7 +262,7 @@ The reader has now seen this lesson three times — Ch4 (means are noisy), Ch5 (
 
 The unconstrained tangency formula was **w**<sub>tan</sub> ∝ **Σ**⁻¹ (**μ** − *r<sub>f</sub>* **1**). Two facts about this expression:
 
-1. **Σ⁻¹ has large off-diagonal entries when the basket has highly correlated assets.** Heuristically: if two columns of Σ are nearly identical (correlation near 1), Σ is nearly singular and Σ⁻¹ has very large entries that *cancel* — the inverse is dominated by tiny differences in nearly-collinear directions.
+1. **Σ⁻¹ has large off-diagonal entries when the basket has highly correlated assets.** Heuristically: if two columns of Σ are nearly identical (correlation near 1), Σ is nearly singular and Σ⁻¹ has very large entries that *cancel* — the inverse is dominated by tiny differences in nearly-collinear directions. *Concretely:* a 2×2 covariance with σ = 1 each and ρ = 0.95 has determinant 1 − 0.95² = 0.0975, so Σ⁻¹ has off-diagonals near −0.95/0.0975 ≈ **−9.7** and diagonals near +10.3. Bump ρ to 0.99 and those entries balloon to ≈ ∓50. Tiny changes in (μ − *r<sub>f</sub>*) get multiplied by these huge cancelling numbers — that's the amplification.
 2. **(μ − r_f**·**1) is noisy.** Ch4 §2 measured this: the SE of an annualized mean is roughly σ/√N, and for daily SPY data it's ~4–5 percentage points wide.
 
 Multiply a noisy vector by a matrix with large cancelling off-diagonal entries and you get a *very* noisy result. **Small input noise → large output swings in weights.** This is structural to the formula, not a bug in the optimizer.
@@ -283,9 +288,9 @@ What we expect (and what we observe):
 
 ### 5.3 Three remediations, one paragraph each
 
-**1. Shrinkage on μ̂ (Ch4).** The standard answer to noisy μ̂. Pulls extreme estimates toward the cross-sectional grand mean, reducing the differences that Σ⁻¹ amplifies. *In this chapter's data*, JS shrinkage at N ≈ 5,000 daily obs barely moved the means (factor ≈ 0.99) — the demonstrated instability comes from the *bootstrap* draws, where each resample is its own small-sample story. **Shrinkage helps most when N is small, the cross-section is broad, and the dispersion-vs-noise ratio favors pulling.** Exercise 2 has you re-trace the frontier with JS-shrunk means; on this basket the difference is small but instructive.
+**1. Shrinkage on μ̂ (Ch4).** The standard answer to noisy μ̂. Pulls extreme estimates toward the cross-sectional grand mean, reducing the differences that Σ⁻¹ amplifies. *In this chapter's data*, JS shrinkage at N ≈ 5,000 daily obs barely moved the means (factor ≈ 0.99) — the demonstrated instability comes from the *bootstrap* draws, where each resample is its own small-sample story. **Shrinkage helps most when N is small, the cross-section is broad, and the dispersion-vs-noise ratio favors pulling.** Because the in-sample contrast is so mild on this basket, **the body of the chapter does not show a raw-vs-shrunk frontier overlay — Exercise 2 is the demonstration.** Re-tracing §3.3 with JS-shrunk means is the cleanest way to see (and feel) how mild "mild" really is here, and to compare against the regime where shrinkage *would* matter (smaller N, broader cross-section).
 
-**2. Shrinkage on Σ̂ (Ledoit-Wolf and family — named only).** Σ̂ also has noise, especially in the off-diagonals — and that noise is what gives Σ⁻¹ its large cancelling entries. The Ledoit-Wolf estimator shrinks Σ̂ toward a structured target (typically the diagonal of Σ̂, treating assets as uncorrelated) by a data-driven amount. Full treatment deferred; this is the natural complement to Ch4's μ-shrinkage on the Σ side.
+**2. Shrinkage on Σ̂ (Ledoit-Wolf and family — named only).** Σ̂ also has noise, especially in the off-diagonals — and that noise is what gives Σ⁻¹ its large cancelling entries. The Ledoit-Wolf estimator shrinks Σ̂ toward a structured target (typically the diagonal of Σ̂, treating assets as uncorrelated) by a data-driven amount. *Why does shrinking toward "uncorrelated" help?* Because off-diagonal noise is what makes Σ near-singular and Σ⁻¹ explosive — pulling the off-diagonals partway toward zero pushes Σ away from singularity, and the resulting Σ⁻¹ has smaller, more stable entries. Full treatment deferred; this is the natural complement to Ch4's μ-shrinkage on the Σ side.
 
 **3. Constrain the optimizer.** Long-only and per-asset weight caps both blunt the levering effect of Σ⁻¹. The long-only constraint above already made the analytic XLK short go away at no vol cost — that's a representative outcome. Many institutional portfolios go further: max 10% per asset, max sector exposure, etc. **Constraints are not just business-policy; they are statistical regularizers.**
 
@@ -397,7 +402,7 @@ A connecting line forward: **Chapter 7 (linear regression) and Chapter 8 (factor
 **Decision rules this chapter unlocks:**
 
 - *Default to long-only.* Unconstrained MVO can short-sell to lever small μ̂-differences; long-only caps the damage at near-zero vol cost on diversified baskets.
-- *Treat MVO weights as suggestions, not orders.* If a 200-resample bootstrap moves XLK's tangency weight between 0% and 87% on the same data, your single point estimate is one draw from that distribution. The 60/40 portfolio you held all along may not be statistically distinguishable from "optimal."
+- *Treat MVO weights as suggestions, not orders.* If a 200-resample bootstrap moves XLK's tangency weight between 0% and 100% on the same data, your single point estimate is one draw from that distribution. The 60/40 portfolio you held all along may not be statistically distinguishable from "optimal."
 - *Audit risk contributions, always.* Even an "intuitive" allocation (60/40, EW8, the lazy three-fund) hides skew in where the risk lives. The audit is one matrix-vector product; do it.
 - *Default to risk parity when you don't trust μ̂.* You usually don't — especially on small samples, new strategies, or recent data. RP gives you a stable, diversified portfolio whose only input is Σ̂.
 - *Shrink μ̂ if you must use MVO.* Ch4's shrinkage helps most when N is small and dispersion is large — the regime in which raw MVO breaks worst. *In-sample* on this 20-year basket the shrinkage is mild; that does not generalize to shorter samples or smaller cross-sections.
