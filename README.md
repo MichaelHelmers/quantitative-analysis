@@ -33,10 +33,10 @@ The path is one coherent sequence aimed at a DIY quant who eventually wants to d
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 07 | _planned_ | Linear regression primer: the one piece of inferential statistics the rest of the curriculum leans on. |
-| 08 | _planned_ | Factor models: CAPM, Fama–French, and decomposing returns into systematic and idiosyncratic pieces. |
-| 09 | _planned_ | Time-varying models: GARCH for volatility clustering, DCC-GARCH for correlation regimes. |
-| 10 | _planned_ | Tail risk: extreme value theory, generalized Pareto, copulas, and tail dependence. |
+| 07 | [`07-regression`](./07-regression) | Linear regression primer: three flavors (description, inference, prediction), residual diagnostics, and the three classic pitfalls (OVB, look-ahead, spurious). The inference toolkit Ch8 onward leans on. |
+| 08 | [`08-factor-models`](./08-factor-models) | Factor models: CAPM as a single regression, Fama-French 3- and 5-factor extensions, β as systematic exposure and α as the noise-laden residual. The 8-asset basket is essentially a one-factor object — Ch3's hidden-factor-exposure promise paid. |
+| 09 | [`09-garch`](./09-garch) | Time-varying models: EWMA, GARCH(1,1) hand-rolled via MLE, GARCH-VaR, and DCC-GARCH for correlation regimes. The chapter that needs Maximum Likelihood Estimation. |
+| 10 | [`10-tail-risk`](./10-tail-risk) | Tail risk: peaks-over-threshold EVT with the Generalized Pareto Distribution, EVT-VaR vs Historical vs Gaussian at deep quantiles, tail dependence coefficient (the third correlation flavor — Ch3's promise paid), copulas (named only), and filtered historical simulation pairing GARCH-σ with EVT-tail-shape. |
 
 ### Part 5 — Strategy Building
 

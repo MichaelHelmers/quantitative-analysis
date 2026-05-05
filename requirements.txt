@@ -5,3 +5,4 @@ pandas-stubs
 matplotlib
 yfinance
 scipy
+statsmodels>=0.14
