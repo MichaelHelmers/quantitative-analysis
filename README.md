@@ -6,7 +6,10 @@ runnable Jupyter notebook (`lesson.ipynb`).
 
 ## Curriculum (work in progress)
 
-The path is one coherent sequence aimed at a DIY quant who eventually wants to day-trade NQ futures with a portfolio on the side. Part 1 covers foundations; Parts 2–4 build the academic spine; Parts 5–6 introduce strategies and how to test them honestly; Part 7 teaches realistic execution; Part 8 brings everything to intraday futures; Part 9 takes you live.
+The path is one coherent sequence aimed at a DIY quant whose goal is **sub-session intraday futures trading** — entries and exits within a single session, flat by close, with NQ as the eventual target instrument. Part 1 covers foundations and risk-adjusted performance on daily bars; Parts 5–9 pivot to intraday: data substrate, strategy taxonomy, your first runnable strategy, three chapters on backtesting honestly, two on execution realism (costs and microstructure), then sizing, regime detection, more strategies, futures mechanics, and going live.
+
+For the curriculum-pivot rationale and full per-chapter scope sketches, see [`docs/superpowers/specs/2026-05-07-curriculum-pivot-design.md`](./docs/superpowers/specs/2026-05-07-curriculum-pivot-design.md).
+
 
 ### Part 1 — Foundations
 
@@ -23,53 +26,43 @@ The path is one coherent sequence aimed at a DIY quant who eventually wants to d
 | 04 | [`04-expected-returns`](./04-expected-returns) | Estimating expected returns: historical mean, shrinkage, and why estimating return is the hard problem in finance. |
 | 05 | [`05-risk-metrics`](./05-risk-metrics) | Risk metrics: drawdown, VaR / CVaR, and the Sharpe ratio — three flavors of risk metric, with honest CIs that show two strategies whose point Sharpes differ by 0.2 are statistically indistinguishable at 20-year sample sizes. |
 
-### Part 3 — Portfolio Construction
+### Part 5 — Intraday Foundations
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 06 | [`06-portfolio-construction`](./06-portfolio-construction) | Portfolio construction: the efficient frontier, the tangency / max-Sharpe portfolio, and risk parity — three philosophies (minimize risk, maximize Sharpe, equalize risk contributions) plus the instability lesson that justifies the third. |
+| 06 | _planned_ | Bridge: daily bars → intraday data — sources, bar construction (time / volume / dollar / imbalance), intraday seasonality, event windows (FOMC, CPI, NFP), session structure. |
+| 07 | _planned_ | Strategy taxonomy: where edges come from — mean reversion, momentum, breakout, event-driven. Frame each by its edge mechanism. |
+| 08 | _planned_ | Your first edge: intraday mean reversion on SPY — idea → signal → naive backtest, with regression for signal generation introduced inline. |
 
-### Part 4 — Modeling Returns
-
-| # | Chapter | Topic |
-|---|---------|-------|
-| 07 | [`07-regression`](./07-regression) | Linear regression primer: three flavors (description, inference, prediction), residual diagnostics, and the three classic pitfalls (OVB, look-ahead, spurious). The inference toolkit Ch8 onward leans on. |
-| 08 | [`08-factor-models`](./08-factor-models) | Factor models: CAPM as a single regression, Fama-French 3- and 5-factor extensions, β as systematic exposure and α as the noise-laden residual. The 8-asset basket is essentially a one-factor object — Ch3's hidden-factor-exposure promise paid. |
-| 09 | [`09-garch`](./09-garch) | Time-varying models: EWMA, GARCH(1,1) hand-rolled via MLE, GARCH-VaR, and DCC-GARCH for correlation regimes. The chapter that needs Maximum Likelihood Estimation. |
-| 10 | [`10-tail-risk`](./10-tail-risk) | Tail risk: peaks-over-threshold EVT with the Generalized Pareto Distribution, EVT-VaR vs Historical vs Gaussian at deep quantiles, tail dependence coefficient (the third correlation flavor — Ch3's promise paid), copulas (named only), and filtered historical simulation pairing GARCH-σ with EVT-tail-shape. |
-
-### Part 5 — Strategy Building
+### Part 6 — Backtesting (the discipline)
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 11 | _planned_ | Strategy taxonomy: mean reversion, momentum, trend following, pairs / stat-arb — and where each one's **edge** comes from. |
-| 12 | _planned_ | Strategy mechanics: signal generation, **quantifying edge** (expected value per trade, profit factor), position sizing (Kelly, fractional Kelly), risk-of-ruin. |
+| 09 | _planned_ | Backtesting I — Building an honest backtest: vectorized vs event-driven, point-in-time data, fill assumptions, trade-level metrics. |
+| 10 | _planned_ | Backtesting II — Bias and data integrity: look-ahead bugs, survivorship, train-on-test leakage, snooping, in-sample fitting. |
+| 11 | _planned_ | Backtesting III — Walk-forward and statistical validation: train/test discipline, walk-forward optimization, parameter stability, the data-mining trap, bootstrap CI on trade PnL. |
 
-### Part 6 — Backtesting and Validation
-
-| # | Chapter | Topic |
-|---|---------|-------|
-| 13 | _planned_ | Backtesting: walk-forward testing, look-ahead bias, transaction costs, and **testing whether an edge is real** vs a data-mining artifact. |
-
-### Part 7 — Execution
+### Part 7 — Execution Realism
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 14 | _planned_ | Microstructure and execution: order book, bid/ask, market vs limit orders, slippage models, implementation shortfall. |
+| 12 | _planned_ | Costs, slippage, and capacity: cost models, slippage curves, capacity limits — re-running Ch08 with stacked cost models and watching the Sharpe collapse. |
+| 13 | _planned_ | Microstructure and execution: order book mechanics, bid/ask, market vs limit orders, implementation shortfall. |
 
-### Part 8 — Intraday and Futures
-
-| # | Chapter | Topic |
-|---|---------|-------|
-| 15 | _planned_ | From daily to intraday: tick data, bar construction (time / volume / dollar / imbalance), intraday seasonality, event windows (FOMC, CPI, NFP). |
-| 16 | _planned_ | Futures mechanics: contracts, rolls, basis, margin, mark-to-market — and NQ-specific details (tick size, point value, RTH vs ETH session structure). |
-| 17 | _planned_ | Intraday strategies and pitfalls: liquidity-driven mean reversion, news momentum, breakout — and the failure modes that scale worse intraday. |
-
-### Part 9 — Live Trading
+### Part 8 — Sizing, Regime, More Strategies
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 18 | _planned_ | Going live: paper trading, broker APIs, monitoring, kill switches, and the operational side of running real money. |
+| 14 | _planned_ | Position sizing and risk of ruin: Kelly, fractional Kelly, drawdown caps; EVT-based tail estimation when losses are fat-tailed. |
+| 15 | _planned_ | Intraday vol and regime detection: GARCH(1,1) on intraday data, EWMA, FOMC/CPI/NFP windows, vol-targeting and regime-aware sizing. |
+| 16 | _planned_ | More strategies: momentum, breakout, event-driven — each evaluated through the full Ch09–14 discipline. |
+
+### Part 9 — Futures and Going Live
+
+| # | Chapter | Topic |
+|---|---------|-------|
+| 17 | _planned_ | Futures mechanics and NQ specifics: contracts, expiry, rolls, basis, margin, mark-to-market, tick size, point value, RTH vs ETH. |
+| 18 | _planned_ | Going live: paper → real — broker APIs, monitoring, kill switches, operational risk, when to pull a strategy that diverges from its backtest. |
 
 ## How to use this repo
 
