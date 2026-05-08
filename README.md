@@ -31,14 +31,14 @@ An earlier version of this curriculum (commits before 2026-05-07) included a por
 | # | Chapter | Topic |
 |---|---------|-------|
 | 06 | [`06-bridge-to-intraday`](./06-bridge-to-intraday) | Bridge: daily bars → intraday data — Alpaca free-tier setup, bar construction (time / volume / dollar / imbalance), the QQQ intraday U-shape, FOMC overlay, RTH/ETH session structure, IEX-feed bar gaps. The first chapter on the post-pivot intraday spine. |
-| 07 | _planned_ | Strategy taxonomy: where edges come from — mean reversion, momentum, breakout, event-driven. Frame each by its edge mechanism. |
-| 08 | _planned_ | Your first edge: intraday mean reversion on QQQ — idea → signal → naive backtest, with regression for signal generation introduced inline. |
+| 07 | [`07-strategy-taxonomy`](./07-strategy-taxonomy) | Strategy taxonomy: where edges come from — four families (mean reversion / momentum / breakout / event-driven) framed by mechanism, expectancy as the only operational definition of edge, and a lag-*k* autocorrelation hook on QQQ identifying that mean-reversion is cleanest in the closing 30 minutes. Sets up Ch8's first runnable strategy. |
+| 08 | [`08-first-edge`](./08-first-edge) | Your first edge: intraday mean reversion on QQQ — idea (Ch7's lag-1 finding) → signal (regression β̂ = −0.064, t = −3.11 on closing-30-min N=1, K=3) → naive backtest (vectorized, no costs, in-sample Sharpe +2.08). Intentionally inflated; Ch9-11 + Ch12 deflate it. |
 
 ### Part 6 — Backtesting (the discipline)
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 09 | _planned_ | Backtesting I — Building an honest backtest: vectorized vs event-driven, point-in-time data, fill assumptions, trade-level metrics. |
+| 09 | [`09-backtesting-honest`](./09-backtesting-honest) | Backtesting I — Building an honest backtest: rebuilds Ch8's vectorized strategy as a single-position event-driven loop with point-in-time fills, runs three execution timings (same-bar bug → next-open right answer → next-close pessimistic), strips the in-sample Sharpe from Ch8's +2.08 to about +0.80, and bootstraps the trade ledger to a 95% CI of (−1.3, +2.7) that comfortably includes zero — even honest mechanics don't make this a "real" strategy on a single year of data. |
 | 10 | _planned_ | Backtesting II — Bias and data integrity: look-ahead bugs, survivorship, train-on-test leakage, snooping, in-sample fitting. |
 | 11 | _planned_ | Backtesting III — Walk-forward and statistical validation: train/test discipline, walk-forward optimization, parameter stability, the data-mining trap, bootstrap CI on trade PnL. |
 

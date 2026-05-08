@@ -56,6 +56,10 @@ clustering.
 
 **β (beta)** *(Ch. 8; named Ch. 3)* — Slope on a factor in a regression — most commonly the slope on the market in a CAPM regression. The single most-cited number in equity finance: β = 1 means an asset moves 1-for-1 with the market on average; β > 1 amplifies systematic moves; β < 1 dampens them.
 
+**Backtest** *(Ch. 8, intraday; rebuilt Ch. 9)* — A simulation of a trading strategy on historical data, used to estimate the strategy's PnL distribution before risking capital. **Vectorized backtests** compute PnL as a series of forward-return × signal products in one shot; **event-driven backtests** loop bar-by-bar with explicit position state and a trade ledger. Ch9's event-driven rebuild of Ch8's strategy roughly halved the in-sample Sharpe (+2.08 → +0.80) and surfaced a 95% bootstrap CI on the trade ledger of (−1.3, +2.7) — the kind of honest mechanics every later chapter inherits.
+
+**Bar-boundary look-ahead** *(Ch. 9 §1, intraday)* — Specific look-ahead bug where the closing price of bar *t* appears both in the signal computation (its right edge) and in the executed return (its left edge), so the backtest fills at a price the trader never could have seen in real time. The most common bug in vectorized intraday backtests; on Ch8's QQQ MR strategy, removing it dropped the headline Sharpe from +1.57 to +0.80. The fix is a one-bar shift to a `next-open` fill assumption.
+
 **Bar gap (intraday)** *(Ch. 6, intraday)* — A minute in a trading session that produces no bar in the data feed. On Alpaca's free-tier IEX feed, gaps are common (~2-3% of RTH minutes) and reflect minutes when no trade printed *on IEX specifically*, even if other venues had trades. Distinguish from a *short session* (real holiday early close) and a *vendor outage* (genuine data loss).
 
 **Bear market** *(Ch. 1)* — A sustained market decline of roughly 20% or more
@@ -77,6 +81,8 @@ Underlies shrinkage estimators and a huge swath of statistics and ML.
 
 **Bull market** *(Ch. 1)* — A sustained rally of roughly 20% or more from a
 recent trough. Mirrors *bear market*.
+
+**Breakout** *(Ch. 7, intraday)* — Strategy family that trades range expansion after a period of compression. Mechanism: stops cluster on both sides of the range; once the range breaks, stops on the wrong side cascade into market orders that amplify the move. Part information (new info justifies a new range) and part mechanical (stop-runs).
 
 ## C
 
@@ -143,6 +149,8 @@ diversification when it's needed most.
 **Cross-sectional mean** *(Ch. 4)* — The mean across assets at a single
 point in time, in contrast to a time-series mean (one asset across many
 points). The default prior in James-Stein shrinkage applied to a basket.
+
+**Crowding** *(Ch. 7, intraday)* — Capacity-driven decay of an edge as more capital trades the same signal. Classic case: equity stat-arb / pairs trading, where Sharpes of 2-3 pre-2010 collapsed to 0.5-1 by mid-2010s as the strategy went mainstream.
 
 ## D
 
@@ -216,6 +224,8 @@ predicts.
 
 **Excess return** *(Ch. 5)* — Asset return minus the risk-free rate: *r*<sub>excess,t</sub> = *r<sub>t</sub>* − *r*<sub>f,t</sub>. The compensation for taking risk; the input to Sharpe-style metrics. Earning the risk-free rate isn't compensation for risk — you could have it without taking any.
 
+**Execution timing** *(Ch. 9 §3, intraday)* — The choice of *which* bar's *which* price counts as the fill in a backtest. Three canonical timings: **same_close** (entry/exit at the close of the signal/exit bar — Ch8's bug), **next_open** (entry/exit at the open of the bar after the signal/exit bar — the cleanest defensible point-in-time rule), **next_close** (one bar later than next_open — a coarse one-bar-slippage proxy that doesn't bite at 1-minute resolution).
+
 **Expected Shortfall (ES)** *(Ch. 5)* — Synonym for **Conditional VaR (CVaR)**.
 
 **Expected value (*E*[·])** *(Ch. 2)* — The average of the bracketed quantity
@@ -224,6 +234,14 @@ over the data. For a sample of *n* observations, *E*[*x*] = (*x*<sub>1</sub> +
 notation lets us cleanly write averages of more complex expressions, like
 *E*[(*X* − *μ*)²] for variance or *E*[(*X* − *μ<sub>X</sub>*)(*Y* −
 *μ<sub>Y</sub>*)] for covariance.
+
+**Edge** *(Ch. 7, intraday)* — The only operational definition: positive expectancy per trade *after costs*, in some defined regime. Every other definition you'll hear ("high win rate," "great Sharpe," "consistent profit factor") either implies expectancy or fails to capture it. Edges are conditional, not universal; they decay.
+
+**Event-driven** *(Ch. 7, intraday)* — Strategy family that trades around scheduled news (FOMC, CPI, NFP, earnings). Mechanism: scheduled releases create an *expected* variance window — the market knows information is arriving at a specific time, so vol is structurally elevated for some minutes around the print. The vol regime is the predictable part; direction is usually a separate, harder problem.
+
+**Event-driven backtest** *(Ch. 9 §2, intraday)* — A backtest that loops bar-by-bar through the data, maintaining explicit position state and processing entries and exits as they would occur in real time. Slower to write than a vectorized backtest but harder to get *wrong* in subtle ways — execution timing, position management, and order-of-operations are coded explicitly rather than buried in array math. The form every later chapter in the curriculum inherits. Distinct from *event-driven* (Ch7), which is the strategy-family name.
+
+**Expectancy** *(Ch. 7, intraday)* — Per-trade expected value: *E* = *p* · *w* − (1 − *p*) · *l*, where *p* = hit rate, *w* = average winning trade, *l* = average losing trade (as positive number). *E* > 0 → strategy makes money in expectation; *E* after costs is the only quantity that decides profit.
 
 ## F
 
@@ -247,6 +265,8 @@ real return distributions.
 **First moment** *(Ch. 2)* — The mean of a distribution. Daily returns are
 approximately first-moment-stationary.
 
+**Fill assumption** *(Ch. 9 §1, intraday)* — The rule that converts a *decision* (the signal said "buy") into an *execution price* (you actually paid X). Common fill assumptions: **same_close** (fill at the close of the signal bar — usually wrong unless the order was placed before the close), **next_open** (fill at the open of the bar after the signal — the simplest defensible choice for an end-of-bar signal), **VWAP-of-next-K-minutes** (more realistic for sized orders), **midquote** (a finer assumption usable when bid/ask are available). The fill assumption is one input to the broader *execution-timing* choice.
+
 **Filtered historical simulation (FHS)** *(Ch. 10 §3.4; named in Ch. 9 §5)* — Production-grade tail-VaR construction: standardise returns by GARCH σ̂<sub>t</sub>, fit EVT-GPD on the standardised residuals, recombine today's σ̂<sub>T</sub> with the residual tail-shape. **GARCH for the variance, EVT for the tail shape.** ξ̂ on standardised residuals (≈0.06 for SPY) is much smaller than ξ̂ on raw returns (≈0.19) — GARCH absorbs most of the fat-tail behavior.
 
 **Fitted value** *(Ch. 7)* — The model's prediction at an observed *x*: *ŷ<sub>t</sub>* = *α̂* + *β̂*·*x<sub>t</sub>*. The y-coordinate of the regression line at *x<sub>t</sub>*. The *residual* is observed minus fitted.
@@ -255,6 +275,8 @@ approximately first-moment-stationary.
 current state* — a prediction that varies day-to-day, in contrast to the
 long-run unconditional mean. Named in Ch. 4 as a deferred flavor; formalized
 in Ch. 8 and Ch. 11–12.
+
+**Fakeout** *(Ch. 7, intraday)* — A breakout that reverses immediately after triggering the initial wave of stops. Market-making firms know exactly where retail stops sit; when the post-break move can't sustain itself on real flow, the original range tends to reassert and the breakout traders are stopped out at a loss.
 
 ## G
 
@@ -294,6 +316,10 @@ each bin. The visual representation of an empirical distribution.
 
 **Historical VaR** *(Ch. 5)* — VaR computed empirically as a quantile of the observed return distribution: *VaR<sub>α</sub>* = − *Q<sub>α</sub>*(*r*). No distributional assumption. Preferred to Gaussian VaR for daily equity tails at α ≤ 1% (where the fat-tail premium materially bites).
 
+**Hit rate** *(Ch. 7, intraday)* — Fraction of trades closed at a profit (before costs). Synonym: *win rate*. Meaningless alone — must be paired with *payoff ratio* to compute *expectancy*. A 0.70 hit rate with a 0.30 payoff has expectancy −0.09*R* per trade.
+
+**Holding period** *(Ch. 8, intraday)* — The number of bars (or wall-clock units) a position is held between entry and exit. Often denoted *K* in this curriculum's strategy notation. Choosing *K* is a free parameter that interacts with the lookback *N*: shorter *K* harvests fast mean-reversion; longer *K* averages over more noise.
+
 ## I
 
 **IEX feed** *(Ch. 6, intraday)* — Trade prints from IEX (Investors Exchange), one US equity venue. The free tier of Alpaca's Market Data API delivers IEX-only minute bars. Compare *SIP* (the consolidated full-tape feed across all venues, paid). Has gaps — minutes when IEX itself had no print but other venues did produce no bar at all (~2-3% of RTH minutes typically missing on QQQ).
@@ -306,6 +332,8 @@ each bin. The visual representation of an empirical distribution.
 can be diversified away in a sufficiently large basket — the residual ε in a factor-model regression. Complement of *systematic risk*.
 
 **Intercept (*α̂*)** *(Ch. 7)* — The constant term in a linear regression: the average of *y* when *x* = 0. In CAPM-style regressions, the intercept of (asset − r<sub>f</sub>) on (market − r<sub>f</sub>) is the famous *α* — "everything not explained by market exposure" (Ch. 8).
+
+**In-sample (IS)** *(Ch. 8, intraday)* — A metric computed on the same data used to choose the strategy's parameters. Always optimistic vs the truth; quote as an *upper bound* on what the strategy can really do. Compare *out-of-sample* (Ch11). The Ch7-archived definition was the same; this entry is the post-pivot intraday-strategy formulation.
 
 ## J
 
@@ -338,6 +366,8 @@ heavy a distribution's tails are. Equals 3 for a normal distribution; report
 
 **Lag (*k*)** *(Ch. 2)* — The number of periods by which a series is shifted
 when computing autocorrelation.
+
+**Lookback** *(Ch. 8, intraday)* — The number of bars (or wall-clock units) of history fed into a signal computation. Often denoted *N* in this curriculum's strategy notation. *N* = 1 with QQQ closing-window minute returns harvests Ch7's lag-1 mean-reversion most cleanly.
 
 **Least squares** *(Ch. 7)* — The procedure of fitting a line (or hyperplane) by minimising the sum of squared residuals: SS(α, β) = Σ (y<sub>t</sub> − α − β·x<sub>t</sub>)². Closed-form solutions: *β̂* = Cov(x, y) / Var(x), *α̂* = ȳ − β̂·x̄.
 
@@ -378,6 +408,10 @@ the count.
 **Mean residual life (MRL) plot** *(Ch. 10 §3)* — Plot of mean exceedance above threshold *v* against *v*. Used to pick the GPD threshold *u*: above the right *u*, the curve is approximately linear (the GPD limit has kicked in); below, it bends. Pick *u* in the linear region.
 
 **Multicollinearity** *(Ch. 7)* — When two regressors carry near-identical information, their individual coefficients become unstable (huge SEs) even though the joint fit is fine. The (XᵀX)⁻¹ matrix that produces β̂ has the same instability shape as Ch. 6's Σ⁻¹. Symptom: small changes in data produce large coefficient swings.
+
+**Mean reversion** *(Ch. 7, intraday)* — Strategy family that fades overshoots back toward fair value. Mechanism: liquidity providers (market makers, HFT) earn the spread plus the small reversion that follows when price moves away from fair value faster than information justifies. Dominant intraday dynamic in liquid instruments. On QQQ this curriculum's headline finding is lag-1 ρ ≈ −0.028 across all RTH and ≈ −0.067 in the closing 30 minutes.
+
+**Momentum** *(Ch. 7, intraday)* — Strategy family that trades the persistence of moves. Mechanism: information diffuses slowly; large institutional orders are sliced over hours/days to minimize market impact, keeping price moving in the direction of the order; behavioral biases (anchoring, FOMO) reinforce. Lives at horizons of hours to days on liquid ETFs; **harder to find at sub-session horizons** (which is why Ch8's first runnable strategy is mean-reversion, not momentum).
 
 ## N
 
@@ -421,6 +455,8 @@ individual volatilities and pairwise correlations via *σ<sub>p</sub>²* =
 **Portfolio weights (w)** *(Ch. 3)* — Vector of allocations across assets;
 sums to 1 for a fully-invested long-only portfolio.
 
+**Point-in-time** *(Ch. 9 §1, intraday)* — Discipline that, at each instant *t* of a backtest, only data observable strictly *before* time *t* is allowed to inform decisions made at time *t*. A point-in-time-correct signal at close[*t*] uses no information from times ≥ *t*. Vectorized backtests have to enforce this with explicit lags; event-driven backtests enforce it by the order in which the loop processes bars. Violating point-in-time on Ch8's strategy roughly doubled the headline Sharpe.
+
 **Price series** *(Ch. 1)* — A sequence of an asset's prices indexed by time
 (typically one observation per trading day for daily data). The starting
 primitive of nearly every quant analysis.
@@ -432,6 +468,12 @@ or zero.
 **Prediction interval** *(Ch. 7)* — Error bar on a *new individual ŷ*, computed as ŷ ± 1.96 · √(σ̂²<sub>ε</sub> + SE_line(x)²). Wider than the CI on the regression line because it includes the irreducible residual scatter on top of line-fitting uncertainty.
 
 **p-value** *(Ch. 4; formal definition Ch. 7 §3)* — Probability of seeing |t| (or any test statistic) at least this large under the null hypothesis. p < 0.05 is the conventional reject-the-null bar; *low* in finance because we test many things — Ch. 7 Exercise 4 shows random walks clear |t| > 2 in 98% of trials.
+
+**Parameter drift** *(Ch. 7, intraday)* — Edge decay where a strategy's fitted parameters become miscalibrated as the underlying regime changes — same family, same mechanism, but the specific lookback window or entry threshold no longer matches current conditions. The most insidious decay; Ch10/Ch11 (backtesting bias and walk-forward) is largely about not mistaking parameter drift for a real edge.
+
+**Payoff ratio** *(Ch. 7, intraday)* — *R*<sub>p</sub> = avg_win / avg_loss. Measures how big winners are relative to losers in payoff units. Trend / breakout strategies tend to have low hit rate / high payoff; mean-reversion strategies tend to have high hit rate / low payoff. Both are viable; both can be unprofitable depending on the multiplication.
+
+**Profit factor** *(Ch. 7, intraday)* — gross_winnings / gross_losses. PF > 1 is profitable; PF > 2 is strong; **PF > 3 over a long sample raises curve-fit suspicion** — real strategies on liquid instruments rarely sustain this over thousands of trades.
 
 ## Q
 
@@ -470,6 +512,8 @@ to estimate, not the estimate itself.
 characteristic statistical properties (typical vol level, trend direction).
 Volatility clustering is a manifestation of regime persistence; correlation
 structure also shifts across regimes (Ch. 3).
+
+**Regime change** *(Ch. 7, intraday)* — The transition *event* between two regimes (vol regime, correlation regime, etc.) that switches edges on or off. Distinct from *regime* (Ch2): regime is the state, regime change is the transition. A mean-reversion strategy fit during low vol can fail when vol regime-shifts upward — the strategy isn't worse, the conditions changed. Ch15 (intraday vol & regime detection) is about catching these transitions in real time.
 
 **Return** *(Ch. 1)* — Percentage change in price between two times.
 **Simple return** = `Pₜ / Pₜ₋₁ − 1`. **Log return** = `ln(Pₜ / Pₜ₋₁)`. Returns
@@ -531,12 +575,18 @@ estimates in Ch. 4; used in production portfolio construction in Ch. 6.
 standard error; equivalent to the t-statistic. Measures how confidently we
 can distinguish the estimate from zero.
 
+**Signal** *(Ch. 8, intraday)* — The numerical output of a strategy's decision rule at a given bar — typically a desired position size or direction. The Ch8 signal is `−sign(prior_1min)` when |prior_1min| > 1.0σ, else 0.
+
+**Single-position rule** *(Ch. 9 §2, intraday)* — Position-management rule that allows at most one open trade per side at a time. Drops overlapping signals (a signal that fires while a trade is already open is ignored). The realistic default in a single-account backtest. Ch8's vectorized PnL did *not* enforce single-position — it summed every signal-bar's `signal × forward_return` contribution, which counts overlapping trades as separate "trades." The single-position event-driven version of Ch8's strategy produced 914 trades vs Ch8's 1,471, on identical data.
+
 **Simple return** *(Ch. 1)* — `Pₜ / Pₜ₋₁ − 1`. The return number a brokerage
 statement reports.
 
 **Slope (*β̂*)** *(Ch. 7)* — The coefficient on a regressor in a linear regression: change in *y* per unit change in *x*, on average. In CAPM (Ch. 8), the slope of (asset − r<sub>f</sub>) on (market − r<sub>f</sub>) is the famous *β*.
 
 **SMB (Small Minus Big)** *(Ch. 8)* — Size factor in Fama-French 3-factor model. Daily return of a portfolio long small-cap stocks and short large-cap stocks. Positive on days small caps beat large caps. Most sector ETFs have small-negative β<sub>SMB</sub> (large-cap-tilted by construction).
+
+**Slippage** *(Ch. 9 §3, intraday)* — Difference between the price implied by the signal and the actual fill price you receive. Costs (spread, commission), partial fills, and price drift between the decision and the execution all contribute. Ch9 uses a `next_close` execution timing as a coarse proxy but finds it ≈ `next_open` at 1-minute bar resolution (intra-bar drift is small). Realistic slippage modeling needs an explicit cost function — the topic of Ch12.
 
 **Sortino ratio** *(Ch. 5, named only)* — A Sharpe variant that uses *downside-only* deviation in the denominator, so upside vol isn't penalized. Useful when return distributions are asymmetric.
 
@@ -604,6 +654,12 @@ exchange (e.g., `SPY`, `AAPL`, `BRK-B`).
 For U.S. equities, there are roughly **252** per year (365 minus weekends and
 ~9 holidays).
 
+**Time-horizon dual** *(Ch. 7, intraday)* — The principle that the same return series can be mean-reverting at one timescale and trending at another. QQQ minute returns are anti-correlated at lag 1 (mean-reversion) and weakly positively correlated at lag 120 (early trend). "Is this asset mean-reverting or trending?" is the wrong question; "at what horizon, in what regime?" is the right one.
+
+**Trend following** *(Ch. 7, intraday)* — A subset of momentum framed by directional persistence rather than signal-based entry. Classic implementation: enter when a moving-average crossover or breakout-of-N-day-high signals direction; exit on the reverse signal or trailing stop. Same mechanism as momentum (slow info diffusion + sliced execution).
+
+**Trade ledger** *(Ch. 8, intraday)* — A table of completed trades with entry timestamp, exit timestamp, entry price, exit price, signed PnL, and any auxiliary diagnostic columns. The natural data structure for trade-level metrics: hit rate, expectancy, profit factor, per-trade Sharpe with bootstrap CI. Compare a *PnL series* (continuous bar-by-bar PnL) — different aggregation, different bootstrapping conventions.
+
 ## U
 
 **U-shape** *(Ch. 6, intraday)* — Intraday pattern where mean absolute return is high at the open, low at midday, and elevated (sometimes high, sometimes mild) into the close. The canonical *intraday seasonality* finding. On QQQ over a recent one-year window the open peak runs ~2.3× midday vol while the closing tail is much milder (~1.2×) — modern fragmented markets blunt the textbook closing peak.
@@ -626,6 +682,8 @@ characteristic pattern that GARCH models attempt to capture formally.
 **Volume** *(Ch. 1)* — Number of shares (or contracts) traded in a period.
 A liquidity indicator; large moves on light volume are read differently than
 large moves on heavy volume.
+
+**Vectorized backtest** *(Ch. 8, intraday)* — A backtest that computes PnL as a series of `signal × forward_return` products in one shot, without an explicit bar-by-bar loop. Fast to write and read, easy to vectorize with NumPy, but routinely violates point-in-time discipline. On Ch8's QQQ closing-window mean-reversion strategy, the same-bar bug roughly *doubles* the headline Sharpe (Ch9 §3 measured +1.57 same-close vs +0.80 next-open on the same data). Useful as a cheap sanity-check; **never** the production version. Compare *event-driven backtest* (Ch9).
 
 **Volume bar** *(Ch. 6 §3, named only)* — A bar that closes whenever a fixed share-count of trading has occurred. Equalizes information density by share count. Compare *time bar*, *dollar bar*, *imbalance bar*.
 
