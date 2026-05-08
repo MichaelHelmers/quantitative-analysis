@@ -300,7 +300,9 @@ The connecting thread: every one of these metrics carries hidden information bey
 
 ## 7. Up next
 
-**Chapter 6 — Portfolio Construction: Efficient Frontier and Risk Parity.** Markowitz mean-variance optimization, the **efficient frontier**, the **tangency portfolio** (the one with maximum Sharpe — Ch5's metric becomes Ch6's optimization objective), and **risk parity** as the practitioner's answer to mean-variance instability. Ch4's shrinkage feeds in as the input that keeps the optimization stable; Ch5's Sharpe is what it's optimizing.
+**Chapter 6 — Bridge: From Daily Bars to Intraday Data.** The curriculum pivots here from daily-bar measurement onto sub-session intraday futures trading. Ch6 is a tooling and intuition chapter — Alpaca free-tier minute bars, the **U-shape** in intraday vol on QQQ, an **FOMC overlay** that punches through the seasonality, and the practical realities of bar gaps on the IEX free feed. The same Sharpe-with-honest-CI discipline you built here re-appears in Ch11 (walk-forward validation) when we put statistical confidence intervals on intraday strategy returns rather than 20-year buy-and-hold returns.
+
+> **Note.** An earlier version of this curriculum had Ch6-10 as a portfolio-and-measurement track (efficient frontier, regression, factor models, GARCH, EVT/copulas). Those chapters were retired in the 2026-05-07 pivot when the goal was clarified to sub-session intraday NQ futures trading. Salvaged content folds into the new track: regression into Ch8, GARCH into Ch15, EVT into Ch14.
 
 ## Key Terms
 

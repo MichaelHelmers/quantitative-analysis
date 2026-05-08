@@ -8,7 +8,7 @@ runnable Jupyter notebook (`lesson.ipynb`).
 
 The path is one coherent sequence aimed at a DIY quant whose goal is **sub-session intraday futures trading** — entries and exits within a single session, flat by close, with NQ as the eventual target instrument. Part 1 covers foundations and risk-adjusted performance on daily bars; Parts 5–9 pivot to intraday: data substrate, strategy taxonomy, your first runnable strategy, three chapters on backtesting honestly, two on execution realism (costs and microstructure), then sizing, regime detection, more strategies, futures mechanics, and going live.
 
-For the curriculum-pivot rationale and full per-chapter scope sketches, see [`docs/superpowers/specs/2026-05-07-curriculum-pivot-design.md`](./docs/superpowers/specs/2026-05-07-curriculum-pivot-design.md).
+An earlier version of this curriculum (commits before 2026-05-07) included a portfolio-and-measurement track at Ch6-10. Those chapters were retired in the 2026-05-07 pivot to focus on intraday futures.
 
 
 ### Part 1 — Foundations
@@ -30,9 +30,9 @@ For the curriculum-pivot rationale and full per-chapter scope sketches, see [`do
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 06 | _planned_ | Bridge: daily bars → intraday data — sources, bar construction (time / volume / dollar / imbalance), intraday seasonality, event windows (FOMC, CPI, NFP), session structure. |
+| 06 | [`06-bridge-to-intraday`](./06-bridge-to-intraday) | Bridge: daily bars → intraday data — Alpaca free-tier setup, bar construction (time / volume / dollar / imbalance), the QQQ intraday U-shape, FOMC overlay, RTH/ETH session structure, IEX-feed bar gaps. The first chapter on the post-pivot intraday spine. |
 | 07 | _planned_ | Strategy taxonomy: where edges come from — mean reversion, momentum, breakout, event-driven. Frame each by its edge mechanism. |
-| 08 | _planned_ | Your first edge: intraday mean reversion on SPY — idea → signal → naive backtest, with regression for signal generation introduced inline. |
+| 08 | _planned_ | Your first edge: intraday mean reversion on QQQ — idea → signal → naive backtest, with regression for signal generation introduced inline. |
 
 ### Part 6 — Backtesting (the discipline)
 

@@ -1,8 +1,11 @@
+alpaca-py
 jupyter
+matplotlib
 numpy
 pandas
 pandas-stubs
-matplotlib
-yfinance
+pyarrow
+python-dotenv
 scipy
 statsmodels>=0.14
+yfinance

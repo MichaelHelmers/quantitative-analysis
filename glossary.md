@@ -7,6 +7,15 @@ chapter's prose for the term in context.
 If you hit a term anywhere in the guide that isn't defined here, that's a bug
 — please flag it.
 
+> **Note on retired chapter references.** The curriculum was repivoted on
+> 2026-05-07 from a portfolio/measurement track to an intraday-futures track.
+> Glossary entries tagged *(Ch. 6)*, *(Ch. 7)*, *(Ch. 8)*, *(Ch. 9)*, or
+> *(Ch. 10)* and originally written for **portfolio construction, regression,
+> factor models, GARCH, or EVT/copulas** refer to the **retired chapters**.
+> New entries first introduced in the post-pivot Ch6 onward use the same
+> numeric chapter labels but cover different content. Where it matters for
+> clarity, individual entries flag "(retired)" or "(intraday)".
+
 ---
 
 ## Numerals
@@ -47,6 +56,8 @@ clustering.
 
 **β (beta)** *(Ch. 8; named Ch. 3)* — Slope on a factor in a regression — most commonly the slope on the market in a CAPM regression. The single most-cited number in equity finance: β = 1 means an asset moves 1-for-1 with the market on average; β > 1 amplifies systematic moves; β < 1 dampens them.
 
+**Bar gap (intraday)** *(Ch. 6, intraday)* — A minute in a trading session that produces no bar in the data feed. On Alpaca's free-tier IEX feed, gaps are common (~2-3% of RTH minutes) and reflect minutes when no trade printed *on IEX specifically*, even if other venues had trades. Distinguish from a *short session* (real holiday early close) and a *vendor outage* (genuine data loss).
+
 **Bear market** *(Ch. 1)* — A sustained market decline of roughly 20% or more
 from a recent peak. The threshold is a convention, not a law.
 
@@ -68,6 +79,8 @@ Underlies shrinkage estimators and a huge swath of statistics and ML.
 recent trough. Mirrors *bear market*.
 
 ## C
+
+**CPI (Consumer Price Index)** *(Ch. 6, intraday)* — The headline US inflation print, released monthly by the Bureau of Labor Statistics at 08:30 ET, in the pre-market session. Causes a sharp vol spike on the release minute that is partially absorbed pre-market and partially rolls into the 9:30 cash open.
 
 **CAPM (Capital Asset Pricing Model)** *(Ch. 8)* — Single-factor regression model: R<sub>i,t</sub> − r<sub>f,t</sub> = α + β·(R<sub>mkt,t</sub> − r<sub>f,t</sub>) + ε<sub>i,t</sub>. The simplest factor model in finance; β captures market exposure and α captures the residual mean. Operationally a one-regressor OLS fit; the textbook normative derivation (utility, market clearing) is out of scope here.
 
@@ -133,6 +146,8 @@ points). The default prior in James-Stein shrinkage applied to a basket.
 
 ## D
 
+**Dollar bar** *(Ch. 6, intraday)* — A bar that closes whenever a fixed amount of notional dollar volume has traded. Equalizes information density across the day: more samples in the closing hour, fewer in the midday lull. Compare *time bar*, *volume bar*, *imbalance bar*. Reappears in Ch13 microstructure when slippage modeling needs information-equalized samples.
+
 **Delta method** *(Ch. 5)* — First-order Taylor approximation used to derive the standard error of a function of estimators (e.g., Sharpe = *μ̂* / *σ̂*) from the SEs of the inputs. The Ch. 5 §4.3 derivation gives *SE(Sharpe)* ≈ √((1 + Sharpe²/2) / N) under normality.
 
 **DCC-GARCH** *(Ch. 9 §6)* — Dynamic Conditional Correlation; multivariate GARCH for time-varying correlations. Two steps: (1) per-asset GARCH on each series; (2) update the correlation matrix as a GARCH-style recursion on standardised residuals. Two extra parameters (a, b) MLE-fit on top of per-asset GARCHs. Captures Ch3's regime-shift correlations (e.g., SPY/TLT 2022 sign flip) more cleanly than rolling-window correlation.
@@ -157,6 +172,8 @@ returns reflect total holder earnings.
 **Drawdown** *(Ch. 1, formalized Ch. 5)* — How far below the running peak the price currently sits: *DD*(*t*) = (*P*(*t*) − *P*<sub>peak</sub>(*t*)) / *P*<sub>peak</sub>(*t*). Always ≤ 0 in our negative-decimal convention. **Max drawdown (MDD)** — the most negative *DD*(*t*) over a window — is the headline path-risk metric (Ch. 5 §2).
 
 ## E
+
+**ETH (Extended Trading Hours)** *(Ch. 6, intraday)* — Pre-market (~04:00–09:30 ET) and after-hours (~16:00–20:00 ET) trading on US equity venues. Thinner liquidity, wider spreads, gappier prints than RTH. This curriculum mostly operates RTH-only; sub-session strategies rarely benefit from ETH given the liquidity penalty.
 
 **Efficient frontier** *(Ch. 6)* — The set of portfolios offering the lowest variance for each achievable return target — equivalently, the upper branch of the (σ, μ) curve traced by the mean-variance program. Every individual asset sits *inside* the frontier (diversification dominance); the leftmost point is the **GMV**; the *tangency point* (where the **CML** kisses the curve) is the maximum-Sharpe portfolio.
 
@@ -209,6 +226,8 @@ notation lets us cleanly write averages of more complex expressions, like
 *μ<sub>Y</sub>*)] for covariance.
 
 ## F
+
+**FOMC (Federal Open Market Committee)** *(Ch. 6, intraday)* — The committee within the Federal Reserve that sets the US federal-funds-rate target. ~8 scheduled meetings per year, with the announcement at 14:00 ET. Causes a sharp vol spike on the announcement minute (~4-5× the same-time vol on a typical day on QQQ). One of the canonical "scheduled events" that drive intraday-strategy regime shifts.
 
 **Factor** *(Ch. 8)* — A common driver of asset returns. Examples: the market itself (CAPM), size and value (Fama-French 3), profitability and investment (Fama-French 5). Factor models decompose any asset's return into β-weighted factor exposures plus α plus an idiosyncratic residual.
 
@@ -276,6 +295,12 @@ each bin. The visual representation of an empirical distribution.
 **Historical VaR** *(Ch. 5)* — VaR computed empirically as a quantile of the observed return distribution: *VaR<sub>α</sub>* = − *Q<sub>α</sub>*(*r*). No distributional assumption. Preferred to Gaussian VaR for daily equity tails at α ≤ 1% (where the fat-tail premium materially bites).
 
 ## I
+
+**IEX feed** *(Ch. 6, intraday)* — Trade prints from IEX (Investors Exchange), one US equity venue. The free tier of Alpaca's Market Data API delivers IEX-only minute bars. Compare *SIP* (the consolidated full-tape feed across all venues, paid). Has gaps — minutes when IEX itself had no print but other venues did produce no bar at all (~2-3% of RTH minutes typically missing on QQQ).
+
+**Imbalance bar** *(Ch. 6 §3, named only)* — A bar that closes whenever signed order-flow imbalance (buy volume minus sell volume) crosses a fixed threshold. Equalizes by *information arrival* in the microstructure sense. Most exotic of the four standard bar types; needs trade-direction inference (Lee-Ready or similar). See López de Prado, *Advances in Financial Machine Learning* (2018), Ch. 2.
+
+**Intraday seasonality** *(Ch. 6, intraday)* — Time-of-day structure in any session-stationary statistic (vol, volume, spread). The headline example is the *U-shape* in mean absolute return, with elevated vol at the open and (sometimes) the close vs the midday lull.
 
 **Idiosyncratic risk** *(Ch. 3; formalized Ch. 8 §2)* — The asset-specific portion of risk that
 can be diversified away in a sufficiently large basket — the residual ε in a factor-model regression. Complement of *systematic risk*.
@@ -356,6 +381,8 @@ the count.
 
 ## N
 
+**NFP (Non-Farm Payrolls)** *(Ch. 6, intraday)* — The headline US labor-market print from the BLS Employment Situation report, released monthly at 08:30 ET in the pre-market session. Like CPI, causes a sharp vol spike on the release minute that partially absorbs pre-market and partially rolls into the 9:30 cash open.
+
 **Natural logarithm (`ln`)** *(Ch. 1)* — Logarithm base *e* (≈ 2.71828).
 The inverse of `eˣ`.
 
@@ -425,6 +452,8 @@ qualitative judgment about a company's prospects.
 
 ## R
 
+**RTH (Regular Trading Hours)** *(Ch. 6, intraday)* — 09:30 AM – 4:00 PM ET on weekdays — the main US equity cash session. The default session for sub-session strategies in this curriculum. Compare *ETH* (extended trading hours).
+
 **R² (coefficient of determination)** *(Ch. 7)* — In-sample fraction of variance in *y* explained by the regression: R² = 1 − SS<sub>res</sub>/SS<sub>tot</sub>. Range [0, 1] with intercept; equals corr(*x*, *y*)² in simple regression. **Not** a quality score — *in-sample only*; out-of-sample R² is typically lower and can go negative.
 
 **Realized return** *(Ch. 4)* — What actually happened over a past window.
@@ -470,6 +499,10 @@ visualizes how volatility changes through time.
 **Running peak** *(Ch. 5)* — The maximum of a price series up to and including time *t*: *P*<sub>peak</sub>(*t*) = max<sub>*s* ≤ *t*</sub> *P*(*s*). The reference level against which drawdown is measured.
 
 ## S
+
+**Session boundary** *(Ch. 6, intraday)* — The transition between session N's close and session N+1's open. For sub-session strategies (this curriculum's target), mostly "ignore" — strategies are flat by close. For swing strategies (out of scope), the overnight gap is its own risk to model.
+
+**SIP (Securities Information Processor)** *(Ch. 6, intraday)* — The consolidated full-tape feed across all US equity venues — every trade, every quote update. Available from data vendors as a paid product. The IEX-only free-tier feed used in this curriculum is a subset.
 
 **S&P 500** *(Ch. 1)* — Index of the 500 largest U.S. public companies,
 weighted by market capitalization. The most-watched gauge of the U.S. stock
@@ -541,6 +574,8 @@ chapters.
 
 ## T
 
+**Time bar** *(Ch. 6, intraday)* — A bar covering a fixed wall-clock interval (e.g. 1 minute, 5 minutes). The default sampling for most quant work; constant cadence; varying information density across the session. Compare *volume bar*, *dollar bar*, *imbalance bar*.
+
 **Tail dependence coefficient (λ<sub>U</sub>, λ<sub>L</sub>)** *(Ch. 3 named; Ch. 10 §5 formalized)* — Conditional probability of joint extreme: λ<sub>U</sub> = lim<sub>q→1</sub> P(Y > F<sub>Y</sub><sup>−1</sup>(q) | X > F<sub>X</sub><sup>−1</sup>(q)); λ<sub>L</sub> analogous in the lower tail. Range [0, 1]. Independence → 0; comonotone → 1. Empirical estimator: count joint exceedances. **Survives the truncation artifact that bit Ch3's conditional Pearson ρ.** Highlight finding from Ch. 10 §5.3: SPY/TLT Pearson ρ = −0.31 *but* λ̂_U = λ̂_L ≈ 0.05 — Pearson and tail-λ tell genuinely different stories.
 
 **Tail premium** *(Ch. 5)* — The gap between historical VaR and Gaussian VaR; the quantitative restatement of Ch. 2's fat-tail finding. *Quantile-dependent*: ~1.0× at 5%, ~1.3× at 1%, ~1.5× at 0.5%. Fat tails are a divergence in *shape* in the deep tail, not a uniform multiplier.
@@ -571,6 +606,8 @@ For U.S. equities, there are roughly **252** per year (365 minus weekends and
 
 ## U
 
+**U-shape** *(Ch. 6, intraday)* — Intraday pattern where mean absolute return is high at the open, low at midday, and elevated (sometimes high, sometimes mild) into the close. The canonical *intraday seasonality* finding. On QQQ over a recent one-year window the open peak runs ~2.3× midday vol while the closing tail is much milder (~1.2×) — modern fragmented markets blunt the textbook closing peak.
+
 **Underwater curve** *(Ch. 5)* — A time-series plot of drawdown (*DD*(*t*) vs time). Visualizes how long the price path spent "submerged" below prior peaks; the shape conveys both depth and recovery.
 
 ## V
@@ -589,6 +626,8 @@ characteristic pattern that GARCH models attempt to capture formally.
 **Volume** *(Ch. 1)* — Number of shares (or contracts) traded in a period.
 A liquidity indicator; large moves on light volume are read differently than
 large moves on heavy volume.
+
+**Volume bar** *(Ch. 6 §3, named only)* — A bar that closes whenever a fixed share-count of trading has occurred. Equalizes information density by share count. Compare *time bar*, *dollar bar*, *imbalance bar*.
 
 **Volatility parity** *(Ch. 6, named only)* — Simpler cousin of risk parity that weights by 1/σ<sub>i</sub> ignoring correlations. Faster to compute and often comparable to ERC when correlations are low; differs meaningfully when there are strong cross-asset correlations.
 
