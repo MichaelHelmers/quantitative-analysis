@@ -22,3 +22,6 @@ Thumbs.db
 data/
 *.csv
 *.parquet
+
+# Superpowers working docs (plans/specs)
+docs/superpowers/
