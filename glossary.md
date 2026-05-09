@@ -181,6 +181,8 @@ returns reflect total holder earnings.
 
 **Drawdown** *(Ch. 1, formalized Ch. 5)* — How far below the running peak the price currently sits: *DD*(*t*) = (*P*(*t*) − *P*<sub>peak</sub>(*t*)) / *P*<sub>peak</sub>(*t*). Always ≤ 0 in our negative-decimal convention. **Max drawdown (MDD)** — the most negative *DD*(*t*) over a window — is the headline path-risk metric (Ch. 5 §2).
 
+**Deflation factor** *(Ch. 11 §1, intraday)* — Ratio of out-of-sample Sharpe to in-sample Sharpe: OOS / IS. Captures the strategy's signal-to-noise ratio under honest evaluation. Typical retail strategies deflate to 0.3-0.7. On Ch11's QQQ closing-window MR strategy, train/test split deflation = 0.28 (severe); above 0.7 is suspicious (suggests accidental information leakage); at 0 means the IS was noise.
+
 ## E
 
 **ETH (Extended Trading Hours)** *(Ch. 6, intraday)* — Pre-market (~04:00–09:30 ET) and after-hours (~16:00–20:00 ET) trading on US equity venues. Thinner liquidity, wider spreads, gappier prints than RTH. This curriculum mostly operates RTH-only; sub-session strategies rarely benefit from ETH given the liquidity penalty.
@@ -337,6 +339,8 @@ can be diversified away in a sufficiently large basket — the residual ε in a 
 
 **Intercept (*α̂*)** *(Ch. 7)* — The constant term in a linear regression: the average of *y* when *x* = 0. In CAPM-style regressions, the intercept of (asset − r<sub>f</sub>) on (market − r<sub>f</sub>) is the famous *α* — "everything not explained by market exposure" (Ch. 8).
 
+**Holdout set** *(Ch. 11 §2, intraday)* — Synonym for the test set in a train/test split — the portion of the data the strategy and its parameters are *never* fit to. Operational rule: evaluate on the holdout exactly once. Iterate on the holdout — re-tune after seeing OOS performance — and you have effectively re-merged train and test, with all the snooping that implies.
+
 **In-sample (IS)** *(Ch. 8, intraday; formalized Ch. 10)* — A metric computed on the same data used to choose the strategy's parameters. Always optimistic vs the truth; quote as an *upper bound* on what the strategy can really do. The Ch10 §4 sweep makes the upper-bound nature concrete — the best Sharpe across 21 thresholds is +1.86 but its t-statistic (1.84) fails even uncorrected significance. Compare *out-of-sample* (Ch11).
 
 ## J
@@ -441,6 +445,10 @@ known to underestimate the frequency of extreme moves.
 **Ordinary least squares (OLS)** *(Ch. 7)* — The standard least-squares procedure under the textbook assumptions (linear model, i.i.d. residuals, finite variance). Implemented in `statsmodels.api.OLS(y, X).fit()`. Produces point estimates plus standard errors, t-statistics, p-values, and confidence intervals.
 
 ## P
+
+**Out-of-sample (OOS)** *(Ch. 11, intraday)* — Performance computed on data the strategy has never seen — neither during parameter selection nor during any "this looks reasonable" iteration. Lower-variance estimator of truth than IS; the only honest answer to "what does the strategy give us?" The walk-forward concat OOS Sharpe with bootstrap CI is the chapter's headline statistic.
+
+**Parameter stability** *(Ch. 11 §3, intraday)* — Diagnostic from walk-forward optimization: does the in-sample-best parameter look similar across consecutive refits? Stable optimizers indicate real edges (parameters drift slowly with regime); unstable optimizers (3×+ swings between windows) are fitting per-window noise. On Ch11's data, k_σ ranged 0.7-2.5 across 10 walk-forward windows — clearly unstable.
 
 **Parametric (Gaussian) VaR** *(Ch. 5)* — VaR computed assuming returns are normal: *VaR<sub>α</sub>* = − (*μ* + *z<sub>α</sub>* · *σ*). Approximately matches historical VaR at conventional 5% levels but underestimates badly in the deep tail (1%, 0.5% — see *tail premium*).
 
@@ -651,9 +659,13 @@ where rare extreme values live. See also *fat tails*.
 
 **Threshold u** *(Ch. 10 §3)* — In peaks-over-threshold EVT, the cutoff above which exceedances are modelled by GPD. Picked from a mean-residual-life plot in the linear region. p95 of losses is a standard practical default for daily-equity work; threshold sensitivity should be checked across p80-p99.
 
+**Train/test split** *(Ch. 11 §2, intraday)* — Single partition of the data into a `train` portion (used for parameter selection) and a `test`/`holdout` portion (held out for OOS evaluation). The simplest validation procedure; honest if the test set is evaluated exactly once. Compare *walk-forward optimization* — repeated train/test in chronological sliding-window form.
+
 **Two-fund separation theorem** *(Ch. 6, named only)* — Under mean-variance optimization with a risk-free asset, every Sharpe-maximizing investor holds some mix of *r<sub>f</sub>* and the **tangency portfolio**. Risk aversion determines the mix; risky composition is the same for everyone.
 
 **T-bill** *(Ch. 5)* — Treasury bill: short-term US Treasury debt (4-, 13-, or 26-week maturities). The standard real-world proxy for "risk-free in dollar terms." Yfinance ticker `^IRX` reports the annualized 13-week T-bill yield in percent.
+
+**Walk-forward optimization** *(Ch. 11 §3, intraday)* — Repeated train/test splits in chronological sliding-window form. At each step: refit on a trailing window (e.g., 3 months); evaluate on the next window (e.g., 1 month); slide forward one step. Concatenate the OOS evaluations into a single PnL series. Yields a continuously-OOS performance estimate plus a sequence of parameter choices whose stability is itself diagnostic. The honest way to estimate forward-looking strategy performance from a single fixed dataset.
 
 **t-statistic** *(Ch. 4; formal definition Ch. 7 §3)* — An estimate divided by its standard error.
 Roughly, the number of standard errors away from zero. |t| > 2 is the
