@@ -39,7 +39,7 @@ An earlier version of this curriculum (commits before 2026-05-07) included a por
 | # | Chapter | Topic |
 |---|---------|-------|
 | 09 | [`09-backtesting-honest`](./09-backtesting-honest) | Backtesting I — Building an honest backtest: rebuilds Ch8's vectorized strategy as a single-position event-driven loop with point-in-time fills, runs three execution timings (same-bar bug → next-open right answer → next-close pessimistic), strips the in-sample Sharpe from Ch8's +2.08 to about +0.80, and bootstraps the trade ledger to a 95% CI of (−1.3, +2.7) that comfortably includes zero — even honest mechanics don't make this a "real" strategy on a single year of data. |
-| 10 | _planned_ | Backtesting II — Bias and data integrity: look-ahead bugs, survivorship, train-on-test leakage, snooping, in-sample fitting. |
+| 10 | [`10-backtesting-bias`](./10-backtesting-bias) | Backtesting II — Bias and data integrity: look-ahead bias on the entry-threshold σ (whole-sample +0.82 vs trailing +1.64 — bias can move Sharpe in either direction), survivorship bias named-only, snooping with a 21-point parameter sweep where the best in-sample Sharpe (+1.86) fails even uncorrected significance let alone Bonferroni (best |t|=1.84 vs corrected critical 3.04). |
 | 11 | _planned_ | Backtesting III — Walk-forward and statistical validation: train/test discipline, walk-forward optimization, parameter stability, the data-mining trap, bootstrap CI on trade PnL. |
 
 ### Part 7 — Execution Realism

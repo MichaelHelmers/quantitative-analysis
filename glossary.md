@@ -75,6 +75,8 @@ has bias = 0. The sample mean is unbiased for the population mean.
 
 **Block maxima (BM)** *(Ch. 10 §2, named only)* — EVT flavor: divide data into non-overlapping blocks (e.g., calendar years), take the maximum in each, fit a GEV distribution to the resulting maxima. Pedagogically clean but wasteful — uses ~20 of 5,000 observations on annual blocks. **Peaks-over-threshold (POT) is the daily-return choice** instead.
 
+**Bonferroni correction** *(Ch. 10 §4, intraday)* — Multiple-comparison correction that raises each test's α to α / *K* for *K* simultaneous tests; controls family-wise error rate at α. Conservative — uniformly less powerful than Holm — but easy to compute and the natural baseline. Ch10 §4 sweeps 21 thresholds; uncorrected critical |t| = 1.96 vs Bonferroni-corrected 3.04. The cost of having looked at K parameters scales as Φ⁻¹(1 − α/(2K)) — sub-logarithmic but real.
+
 **Bias–variance tradeoff** *(Ch. 4)* — The principle that accepting a small
 bias in an estimator can sometimes reduce its overall mean-squared error.
 Underlies shrinkage estimators and a huge swath of statistics and ML.
@@ -320,6 +322,8 @@ each bin. The visual representation of an empirical distribution.
 
 **Holding period** *(Ch. 8, intraday)* — The number of bars (or wall-clock units) a position is held between entry and exit. Often denoted *K* in this curriculum's strategy notation. Choosing *K* is a free parameter that interacts with the lookback *N*: shorter *K* harvests fast mean-reversion; longer *K* averages over more noise.
 
+**Holm-Bonferroni correction** *(Ch. 10 §4, intraday)* — Stepwise multiple-comparison correction. Sort the *K* p-values ascending; compare the *i*-th smallest to α / (*K* − *i* + 1). Uniformly more powerful than plain Bonferroni — accepts any subset Bonferroni accepts, sometimes more — with the same family-wise error guarantee. On Ch10's 21-threshold sweep, neither correction passes anything (best uncorrected |t| = 1.84 fails even the standard 1.96 bar).
+
 ## I
 
 **IEX feed** *(Ch. 6, intraday)* — Trade prints from IEX (Investors Exchange), one US equity venue. The free tier of Alpaca's Market Data API delivers IEX-only minute bars. Compare *SIP* (the consolidated full-tape feed across all venues, paid). Has gaps — minutes when IEX itself had no print but other venues did produce no bar at all (~2-3% of RTH minutes typically missing on QQQ).
@@ -333,7 +337,7 @@ can be diversified away in a sufficiently large basket — the residual ε in a 
 
 **Intercept (*α̂*)** *(Ch. 7)* — The constant term in a linear regression: the average of *y* when *x* = 0. In CAPM-style regressions, the intercept of (asset − r<sub>f</sub>) on (market − r<sub>f</sub>) is the famous *α* — "everything not explained by market exposure" (Ch. 8).
 
-**In-sample (IS)** *(Ch. 8, intraday)* — A metric computed on the same data used to choose the strategy's parameters. Always optimistic vs the truth; quote as an *upper bound* on what the strategy can really do. Compare *out-of-sample* (Ch11). The Ch7-archived definition was the same; this entry is the post-pivot intraday-strategy formulation.
+**In-sample (IS)** *(Ch. 8, intraday; formalized Ch. 10)* — A metric computed on the same data used to choose the strategy's parameters. Always optimistic vs the truth; quote as an *upper bound* on what the strategy can really do. The Ch10 §4 sweep makes the upper-bound nature concrete — the best Sharpe across 21 thresholds is +1.86 but its t-statistic (1.84) fails even uncorrected significance. Compare *out-of-sample* (Ch11).
 
 ## J
 
@@ -375,7 +379,7 @@ when computing autocorrelation.
 
 **Log-likelihood** *(Ch. 9 §3.2)* — Sum of log-densities of observations under a parametric model. MLE picks parameters that maximise the log-likelihood. For GARCH with conditional Gaussian innovations: log L = −½ Σ [log σ²<sub>t</sub> + ε²<sub>t</sub>/σ²<sub>t</sub>].
 
-**Look-ahead bias** *(Ch. 7)* — Using information from time *t+1* (or later) to compute a feature or target at time *t*. Inflates apparent predictive power; the regression looks better in-sample than it can ever do live. The procedural fix: every feature available at *t* must be derivable strictly before *t*. Revisited rigorously in Ch. 13.
+**Look-ahead bias** *(Ch. 7; worked example Ch. 10 §2)* — Using information from time *t+1* (or later) to compute a feature or target at time *t*. The procedural fix: every feature available at *t* must be derivable strictly before *t*. **Pedagogically important course-correction from Ch10:** look-ahead can move Sharpe in *either* direction, not just inflate it. On Ch9's QQQ MR strategy, the whole-sample-σ threshold produced Sharpe +0.82 while the point-in-time trailing-σ version produced +1.64 — the trailing version adapts to local volatility regimes. The bug is using information you didn't have, regardless of inflation direction.
 
 **Ledoit-Wolf shrinkage** *(Ch. 6, named only)* — Shrinkage estimator for the covariance matrix Σ̂, the analog of Ch. 4's James-Stein shrinkage on μ̂. Pulls Σ̂ toward a structured target (typically the diagonal) by a data-driven amount. Reduces the off-diagonal noise that Σ⁻¹ otherwise amplifies.
 
@@ -408,6 +412,8 @@ the count.
 **Mean residual life (MRL) plot** *(Ch. 10 §3)* — Plot of mean exceedance above threshold *v* against *v*. Used to pick the GPD threshold *u*: above the right *u*, the curve is approximately linear (the GPD limit has kicked in); below, it bends. Pick *u* in the linear region.
 
 **Multicollinearity** *(Ch. 7)* — When two regressors carry near-identical information, their individual coefficients become unstable (huge SEs) even though the joint fit is fine. The (XᵀX)⁻¹ matrix that produces β̂ has the same instability shape as Ch. 6's Σ⁻¹. Symptom: small changes in data produce large coefficient swings.
+
+**Multiple-comparisons problem** *(Ch. 10 §4, intraday)* — The statistical fact that *K* simultaneous α-level tests have family-wise false-positive rate ≈ *Kα*, not α. Running 20 backtests with parameter sweeps means even random data produces an "edge" with probability ~64% at the standard 0.05 bar. Corrections: **Bonferroni** (raise each test's bar to α/*K*) and **Holm-Bonferroni** (stepwise). The deeper response is procedural: *don't quote in-sample sweep results as edges*; reserve in-sample sweeps for prototyping.
 
 **Mean reversion** *(Ch. 7, intraday)* — Strategy family that fades overshoots back toward fair value. Mechanism: liquidity providers (market makers, HFT) earn the spread plus the small reversion that follows when price moves away from fair value faster than information justifies. Dominant intraday dynamic in liquid instruments. On QQQ this curriculum's headline finding is lag-1 ρ ≈ −0.028 across all RTH and ≈ −0.067 in the closing 30 minutes.
 
@@ -470,6 +476,8 @@ or zero.
 **p-value** *(Ch. 4; formal definition Ch. 7 §3)* — Probability of seeing |t| (or any test statistic) at least this large under the null hypothesis. p < 0.05 is the conventional reject-the-null bar; *low* in finance because we test many things — Ch. 7 Exercise 4 shows random walks clear |t| > 2 in 98% of trials.
 
 **Parameter drift** *(Ch. 7, intraday)* — Edge decay where a strategy's fitted parameters become miscalibrated as the underlying regime changes — same family, same mechanism, but the specific lookback window or entry threshold no longer matches current conditions. The most insidious decay; Ch10/Ch11 (backtesting bias and walk-forward) is largely about not mistaking parameter drift for a real edge.
+
+**Parameter sweep** *(Ch. 10 §4, intraday)* — A grid of parameter values evaluated on the same data, often as a prelude to selecting "the best" one. The order statistic of K noisy estimates is, by construction, larger than any individual estimate's mean — so sweep-best Sharpe is always an upper bound, never the strategy's actual edge. The natural object for Bonferroni-style corrections; the natural object for OOS validation in Ch11.
 
 **Payoff ratio** *(Ch. 7, intraday)* — *R*<sub>p</sub> = avg_win / avg_loss. Measures how big winners are relative to losers in payoff units. Trend / breakout strategies tend to have low hit rate / high payoff; mean-reversion strategies tend to have high hit rate / low payoff. Both are viable; both can be unprofitable depending on the multiplication.
 
@@ -590,6 +598,10 @@ statement reports.
 
 **Sortino ratio** *(Ch. 5, named only)* — A Sharpe variant that uses *downside-only* deviation in the denominator, so upside vol isn't penalized. Useful when return distributions are asymmetric.
 
+**Snooping bias** *(Ch. 10 §4, intraday)* — Inflation of measured performance caused by selecting one parameter (or model variant) from many candidates evaluated on the same data. Synonyms: *data mining bias*, *p-hacking*. Mechanically identical to the multiple-comparisons problem applied to backtesting. Headline finding on Ch10's 21-point sweep: best in-sample Sharpe (+1.86) versus median across the sweep (+0.82) — a 1.04 Sharpe gap that is *entirely* an artifact of having looked at 21 thresholds.
+
+**Survivorship bias** *(Ch. 10 §3, named-only, intraday)* — Backtest universe that excludes failed/delisted entities, so only survivors are in-sample. Inflates measured returns by 1-2% annualized on US equity universes per published research. Essentially absent for our QQQ-based curriculum (the ETF wrapper absorbs constituent rebalances internally) but bites hard on stock-picking strategies. Survivorship-clean data sources: CRSP (academic gold standard), Norgate Data (~$50/month retail), Sharadar (mid-tier).
+
 **Spurious correlation** *(Ch. 7)* — Apparent regression relationship between unrelated series, often via shared trend. Two independent random walks regressed on each other produce |t| > 2 in 98% of trials with no causal relationship. Empirical fix: regress on *changes*, not *levels*. Genuine level-comovement is **cointegration** (named only).
 
 **Split** *(Ch. 1)* — A re-denomination of a company's shares (e.g., 2-for-1:
@@ -659,6 +671,8 @@ For U.S. equities, there are roughly **252** per year (365 minus weekends and
 **Trend following** *(Ch. 7, intraday)* — A subset of momentum framed by directional persistence rather than signal-based entry. Classic implementation: enter when a moving-average crossover or breakout-of-N-day-high signals direction; exit on the reverse signal or trailing stop. Same mechanism as momentum (slow info diffusion + sliced execution).
 
 **Trade ledger** *(Ch. 8, intraday)* — A table of completed trades with entry timestamp, exit timestamp, entry price, exit price, signed PnL, and any auxiliary diagnostic columns. The natural data structure for trade-level metrics: hit rate, expectancy, profit factor, per-trade Sharpe with bootstrap CI. Compare a *PnL series* (continuous bar-by-bar PnL) — different aggregation, different bootstrapping conventions.
+
+**Trailing-window estimator** *(Ch. 10 §2, intraday)* — Any statistic (mean, std, quantile, regression coefficient) computed from the prior *L* observations, recomputed at each step. The natural point-in-time-clean replacement for whole-sample estimators in a backtest. On Ch10's strategy, replacing whole-sample σ with trailing-20-session σ moved the in-sample Sharpe from +0.82 to +1.64 — the bias direction is data-dependent, but the procedural fix (use a trailing window) is non-negotiable.
 
 ## U
 
