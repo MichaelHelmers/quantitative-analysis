@@ -178,7 +178,7 @@ The all-RTH curve averages across very different parts of the session. Splitting
 
 **The closing 30 minutes is where mean-reversion is cleanest** — roughly **2× the magnitude** of either opening or midday. This is the opposite of the textbook story (which says midday is cleanest because it's quietest), and it's an honest empirical finding worth dwelling on.
 
-The likely interpretation: the closing window is not quiet; it's *mechanical*. End-of-day flows (closing-auction orders, MOC orders, index rebalance trades) create a high-volume environment where liquidity providers can fade overshoots aggressively because there's enough volume to actually do the fading. Midday is *quieter* — fewer overshoots, fewer participants, smaller mean-reversion in absolute magnitude. Opening is contaminated by overnight information absorption, which puts a momentum component on top of the mean-reversion and dilutes the signal.
+The likely interpretation: the closing window is not quiet; it's *mechanical*. End-of-day flows — closing-auction orders, **MOC (market-on-close) orders** (market orders queued during the day that execute at the official 4:00 PM ET closing auction price, used heavily by index funds and ETFs to rebalance at the close), and index rebalance trades — create a high-volume environment where liquidity providers can fade overshoots aggressively because there's enough volume to actually do the fading. Midday is *quieter* — fewer overshoots, fewer participants, smaller mean-reversion in absolute magnitude. Opening is contaminated by overnight information absorption, which puts a momentum component on top of the mean-reversion and dilutes the signal.
 
 This is good news for Ch8: the closing window gives a cleaner mean-reversion signal *and* is where capacity (executable size at a given price) is highest. Bad news: it's also where end-of-day mechanical flows are most active, which means the strategy must be careful not to fight the closing auction or MOC pressure on the last few minutes.
 
@@ -224,6 +224,7 @@ Decision rules unlocked by this chapter:
 | Fakeout | A breakout that reverses immediately, trapping breakout traders and triggering their stops. |
 | Hit rate | Fraction of trades closed at a profit (before costs). Also called *win rate*. |
 | Mean reversion | Strategy family that fades overshoots back toward fair value. Liquidity-providing in nature. |
+| MOC (market-on-close) | Order type queued during the day that executes at the official closing auction price (4:00 PM ET on US equities). Used heavily by index funds, ETFs, and mutual funds to rebalance or mark NAV at the close; concentrates volume and directional pressure into the final minutes of the session. |
 | Momentum | Strategy family that trades the persistence of moves, driven by information diffusion + sliced execution. |
 | Parameter drift | Edge decay where a strategy's fitted parameters become miscalibrated as the underlying regime changes. |
 | Payoff ratio | avg_win / avg_loss. Measures how big winners are relative to losers in payoff units. |
