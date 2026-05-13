@@ -27,6 +27,8 @@ contexts; works because the SPY/TLT correlation is typically negative.
 
 ## A
 
+**ADV (Average Daily Volume)** *(Ch. 12)* — Typical daily traded volume of an instrument, usually quoted in dollars. Denominator of the square-root impact law: impact = η · σ<sub>d</sub> · √(Q/ADV). For ETFs, the consolidated-tape ADV across all 16 US equity venues can be ~30× larger than venue-specific ADV (e.g., IEX-only). Always use consolidated ADV when modeling realistic execution; QQQ's consolidated ADV in 2025-2026 is ~$15B.
+
 **Adjusted close** *(Ch. 1)* — The closing price of a security, retroactively
 corrected for *splits* and *dividends* so that the percentage change between
 any two adjusted closes equals the actual return earned by a holder. Always
@@ -92,6 +94,8 @@ recent trough. Mirrors *bear market*.
 
 **CAPM (Capital Asset Pricing Model)** *(Ch. 8)* — Single-factor regression model: R<sub>i,t</sub> − r<sub>f,t</sub> = α + β·(R<sub>mkt,t</sub> − r<sub>f,t</sub>) + ε<sub>i,t</sub>. The simplest factor model in finance; β captures market exposure and α captures the residual mean. Operationally a one-regressor OLS fit; the textbook normative derivation (utility, market clearing) is out of scope here.
 
+**Capacity (strategy capacity, Q\*)** *(Ch. 12)* — Largest trade size at which a strategy's after-cost expectancy is non-negative. Q\* = ADV · ((μ<sub>trade</sub> − 2s − 2c) / (2 η σ<sub>d</sub>))² when the *impact budget* (μ<sub>trade</sub> − 2s − 2c) is positive; Q\* = $0 otherwise. A strategy with negative impact budget is unprofitable at any size — explicit costs alone exceed the per-trade edge. Ch12 finds Q\* = $0 for the closing-window MR strategy on QQQ at the cost-aware optimum k\* = 2.2.
+
 **Capital Market Line (CML)** *(Ch. 6)* — In (σ, μ) space, the straight line through the risk-free point (0, *r<sub>f</sub>*) and the **tangency portfolio**. Every Sharpe-maximizing investor's holdings sit on this line — risk-averse investors blend in *r<sub>f</sub>*, risk-tolerant investors lever the tangency portfolio. The geometric realization of the **two-fund separation theorem**.
 
 **Calmar ratio** *(Ch. 5, named only)* — A risk-adjusted-return ratio that uses absolute max drawdown in the denominator instead of vol. Penalizes path risk directly; complementary to Sharpe rather than a replacement.
@@ -126,6 +130,10 @@ coefficient: *β̂* ± 1.96 · SE(*β̂*).
 
 **Correction** *(Ch. 1)* — A market decline of roughly 10–20% from a recent
 peak. Steeper sustained declines are called *bear markets*.
+
+**Corwin-Schultz estimator** *(Ch. 12)* — Estimator of the bid/ask spread from two-bar high-low ranges. Derives spread from the inflation of log(H/L) beyond what within-bar Brownian variance would predict, calibrated from the combined two-bar range γ. Independent of *Roll's estimator*; useful as a second-opinion sanity check. Published for daily bars; adaptation to 1-min bars works well on liquid ETFs but degrades on thinly-traded names. On QQQ 1-min, gives 0.79 bp half-spread vs Roll's 0.72 bp — agreement within 10%.
+
+**Cost-aware optimization** *(Ch. 12)* — Re-tuning a strategy parameter with the *after-cost* performance as the objective. Distinct from cost-naive optimization (optimize pre-cost, subtract costs at the end). Cost-aware optima sit at higher thresholds and lower trade counts because cost is levied per trade. On Ch12's QQQ MR strategy, cost-naive k\* = 0.70 (S_pre +2.77) flips to cost-aware k\* = 2.20 (S_post = −2.97 — still negative, since costs exceed the per-trade edge at every threshold).
 
 **Correlation matrix** *(Ch. 3)* — *N* × *N* symmetric matrix of pairwise
 Pearson correlations among *N* assets. Diagonal is 1.0; off-diagonals are in
@@ -222,6 +230,8 @@ underestimates the frequency of extreme events. Two main flavors: **block maxima
 
 **EVT-VaR / EVT-ES** *(Ch. 10 §4)* — VaR / ES computed from the GPD parametric form. Closed form: VaR<sub>q</sub> = u + (σ̂/ξ̂) · [((n/n<sub>u</sub>)·q)<sup>−ξ̂</sup> − 1]. **Extrapolates beyond the sample**, which Historical can't and Gaussian gets wrong. Bootstrap CI is wide (~30%+ of point estimate at q=0.001) — extrapolation gives you a number, not certainty.
 
+**Explicit cost** *(Ch. 12)* — Costs that hit the brokerage statement: commission, exchange fees, SEC fees, financing on margin and overnight inventory. Visible, billed, easy to model. For QQQ retail, on the order of 0.05-0.07 bp per leg at IBKR tiered; $0 at PFOF-funded brokers (Schwab/Fidelity/Robinhood). Contrast with *implicit cost*.
+
 **Excess kurtosis** *(Ch. 2)* — Kurtosis minus 3, so the normal-distribution
 benchmark equals zero. Positive values mean tails heavier than the normal
 predicts.
@@ -306,6 +316,8 @@ correlations is **DCC-GARCH**, also deferred.)
 
 ## H
 
+**Half-spread** *(Ch. 12)* — Half the inside bid/ask spread, expressed as a fraction of price or in bp. The one-leg cost of crossing the spread once — buying at the ask or selling at the bid instead of executing at the mid. Round-trip transactions cross the spread twice, so round-trip spread cost ≈ 2 · half-spread. On QQQ 1-min in 2025-2026, Roll's estimator gives ~0.72 bp all-RTH.
+
 **Hidden factor exposure** *(Ch. 3; paid Ch. 8 §5)* — The phenomenon that seemingly distinct
 assets share underlying drivers (interest rates, oil, the broad market
 itself), so a "diversified" portfolio may be a single bet. Quantified in Ch. 8 by computing the basket's weighted-average β: EW8 over the curriculum's 8-ticker basket has β ≈ 0.69 and R² on SPY ≈ 0.90 — *the basket is essentially a one-factor object.*
@@ -329,6 +341,10 @@ each bin. The visual representation of an empirical distribution.
 ## I
 
 **IEX feed** *(Ch. 6, intraday)* — Trade prints from IEX (Investors Exchange), one US equity venue. The free tier of Alpaca's Market Data API delivers IEX-only minute bars. Compare *SIP* (the consolidated full-tape feed across all venues, paid). Has gaps — minutes when IEX itself had no print but other venues did produce no bar at all (~2-3% of RTH minutes typically missing on QQQ).
+
+**Impact (market impact)** *(Ch. 12)* — The adverse price move caused by your own order eating through the resting book. Modeled by the *square-root impact law*: impact = η · σ<sub>d</sub> · √(Q/ADV), in fractional units. Empirically robust across markets, with η ≈ 0.1 for liquid US equities. For retail-sized trades on QQQ ($10k-$100k), impact is well below half-spread; impact only dominates at $10M+ institutional size.
+
+**Implicit cost** *(Ch. 12)* — Costs paid through prices, not the brokerage statement: the bid/ask spread you cross on entry and exit, and the slippage / market impact your size induces. Invisible on the statement; first-order on small-edge strategies. Contrast with *explicit cost*.
 
 **Imbalance bar** *(Ch. 6 §3, named only)* — A bar that closes whenever signed order-flow imbalance (buy volume minus sell volume) crosses a fixed threshold. Equalizes by *information arrival* in the microstructure sense. Most exotic of the four standard bar types; needs trade-direction inference (Lee-Ready or similar). See López de Prado, *Advances in Financial Machine Learning* (2018), Ch. 2.
 
@@ -487,6 +503,8 @@ or zero.
 
 **Parameter sweep** *(Ch. 10 §4, intraday)* — A grid of parameter values evaluated on the same data, often as a prelude to selecting "the best" one. The order statistic of K noisy estimates is, by construction, larger than any individual estimate's mean — so sweep-best Sharpe is always an upper bound, never the strategy's actual edge. The natural object for Bonferroni-style corrections; the natural object for OOS validation in Ch11.
 
+**Payment for order flow (PFOF)** *(Ch. 12)* — Compensation arrangement where a retail broker routes its customers' orders to a wholesale market maker (Citadel, Virtu) instead of public lit exchanges. The wholesaler pays the broker a fraction of a cent per share for the flow; customers receive some price improvement vs the NBBO. Enables "zero commission" retail trading; shifts cost into the spread the wholesaler captures. Operationally invisible to the retail trader but a real cost.
+
 **Payoff ratio** *(Ch. 7, intraday)* — *R*<sub>p</sub> = avg_win / avg_loss. Measures how big winners are relative to losers in payoff units. Trend / breakout strategies tend to have low hit rate / high payoff; mean-reversion strategies tend to have high hit rate / low payoff. Both are viable; both can be unprofitable depending on the multiplication.
 
 **Profit factor** *(Ch. 7, intraday)* — gross_winnings / gross_losses. PF > 1 is profitable; PF > 2 is strong; **PF > 3 over a long sample raises curve-fit suspicion** — real strategies on liquid instruments rarely sustain this over thousands of trades.
@@ -547,6 +565,8 @@ breaks risk into magnitude / persistence / path / correlation flavors.
 
 **Risk-free rate (*r<sub>f</sub>*)** *(Ch. 5)* — The yield on a (effectively) zero-default-risk asset; **T-bill** yield in practice. Subtracted from asset returns to compute *excess returns*. Use the rolling daily series, not a constant — the 20y window spans 0% (ZIRP) and 5% rate regimes.
 
+**Roll's estimator** *(Ch. 12)* — Estimator of the effective half-spread from trade-price returns: *s* = √(−Cov(*r<sub>t</sub>*, *r<sub>t−1</sub>*)) when the lag-1 covariance is negative. Mechanism: under random bid-ask-bounce, consecutive trade returns gain a mechanical negative autocovariance equal to −s². Gives an *upper bound* on true spread because it cannot tell genuine mean-reversion apart from bid-ask noise. The Ch7 lag-1 ρ and Roll's estimator measure the same statistic, rescaled. Ch12 finds Roll's all-RTH = 0.72 bp on QQQ.
+
 **Rolling correlation** *(Ch. 3)* — Pairwise correlation computed over a
 sliding window of recent observations. Reveals time-variation that a
 single-number long-run correlation hides — e.g., the SPY/TLT correlation
@@ -601,6 +621,8 @@ statement reports.
 **Slope (*β̂*)** *(Ch. 7)* — The coefficient on a regressor in a linear regression: change in *y* per unit change in *x*, on average. In CAPM (Ch. 8), the slope of (asset − r<sub>f</sub>) on (market − r<sub>f</sub>) is the famous *β*.
 
 **SMB (Small Minus Big)** *(Ch. 8)* — Size factor in Fama-French 3-factor model. Daily return of a portfolio long small-cap stocks and short large-cap stocks. Positive on days small caps beat large caps. Most sector ETFs have small-negative β<sub>SMB</sub> (large-cap-tilted by construction).
+
+**Square-root impact law** *(Ch. 12)* — Empirical regularity that the temporary price impact of a market order scales as the square root of the order's fraction of average daily volume: impact = η · σ<sub>d</sub> · √(Q/ADV). η ≈ 0.1 for liquid US equities (Almgren et al. 2005); 0.3 conservative; 0.5 microcap territory. The √ exponent reflects the fact that doubling order size doesn't double impact — liquidity refreshes between marginal fills. Robust across markets and decades of TAQ studies.
 
 **Slippage** *(Ch. 9 §3, intraday)* — Difference between the price implied by the signal and the actual fill price you receive. Costs (spread, commission), partial fills, and price drift between the decision and the execution all contribute. Ch9 uses a `next_close` execution timing as a coarse proxy but finds it ≈ `next_open` at 1-minute bar resolution (intra-bar drift is small). Realistic slippage modeling needs an explicit cost function — the topic of Ch12.
 

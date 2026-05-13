@@ -46,7 +46,7 @@ An earlier version of this curriculum (commits before 2026-05-07) included a por
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 12 | _planned_ | Costs, slippage, and capacity: cost models, slippage curves, capacity limits — re-running Ch08 with stacked cost models and watching the Sharpe collapse. |
+| 12 | [`12-costs-slippage-capacity`](./12-costs-slippage-capacity) | Costs, slippage, and capacity: Roll's and Corwin-Schultz half-spread estimators (0.72 bp on QQQ, agreeing within 10%), commission references (PFOF vs IBKR tiered), square-root impact law, cost-aware threshold optimization (k\*=0.70 cost-naive → k\*=2.20 cost-aware), and capacity Q\* — closes the Ch8→Ch11 deflation arc with after-cost Sharpe = −2.97 and capacity Q\* = $0. The strategy does not exist as a tradable edge. |
 | 13 | _planned_ | Microstructure and execution: order book mechanics, bid/ask, market vs limit orders, implementation shortfall. |
 
 ### Part 8 — Sizing, Regime, More Strategies
