@@ -29,6 +29,8 @@ contexts; works because the SPY/TLT correlation is typically negative.
 
 **ADV (Average Daily Volume)** *(Ch. 12)* — Typical daily traded volume of an instrument, usually quoted in dollars. Denominator of the square-root impact law: impact = η · σ<sub>d</sub> · √(Q/ADV). For ETFs, the consolidated-tape ADV across all 16 US equity venues can be ~30× larger than venue-specific ADV (e.g., IEX-only). Always use consolidated ADV when modeling realistic execution; QQQ's consolidated ADV in 2025-2026 is ~$15B.
 
+**Adverse selection (toxicity)** *(Ch. 13)* — The systematic tendency for passive limit fills to occur exactly when the market is about to move against the posted side: limits get hit *because* an informed counterparty is crossing the spread. Quantified as `toxicity = drift_unconditional − drift_filled`, the wedge between the K-bar drift on the full signal universe and the K-bar drift on the subset that actually filled as passives. Positive toxicity → filled trades did worse than the strategy expected. The canonical microstructure reason why "post a limit instead of crossing the spread" doesn't trivially flip the sign of an after-cost Sharpe.
+
 **Adjusted close** *(Ch. 1)* — The closing price of a security, retroactively
 corrected for *splits* and *dividends* so that the percentage change between
 any two adjusted closes equals the actual return earned by a holder. Always
@@ -259,6 +261,10 @@ notation lets us cleanly write averages of more complex expressions, like
 
 ## F
 
+**Fill-or-kill (FOK)** *(Ch. 13)* — Order type that must be filled in its entirety immediately or cancelled entirely. No partial fills. Used when partial execution would compromise the strategy (e.g., a multi-leg trade where one leg without the others is a different position).
+
+**Fill rate** *(Ch. 13)* — Fraction of would-be passive trades that successfully fill within the strategy's hold window: `filled / total_signals`. The denominator is the count of signals the strategy emitted; the numerator is the count whose limit was touched-through within K bars. Conditional metric — fill rate without the adverse-selection diagnostic alongside it overstates passive execution's value.
+
 **FOMC (Federal Open Market Committee)** *(Ch. 6, intraday)* — The committee within the Federal Reserve that sets the US federal-funds-rate target. ~8 scheduled meetings per year, with the announcement at 14:00 ET. Causes a sharp vol spike on the announcement minute (~4-5× the same-time vol on a typical day on QQQ). One of the canonical "scheduled events" that drive intraday-strategy regime shifts.
 
 **Factor** *(Ch. 8)* — A common driver of asset returns. Examples: the market itself (CAPM), size and value (Fama-French 3), profitability and investment (Fama-French 5). Factor models decompose any asset's return into β-weighted factor exposures plus α plus an idiosyncratic residual.
@@ -340,6 +346,8 @@ each bin. The visual representation of an empirical distribution.
 
 ## I
 
+**Immediate-or-cancel (IOC)** *(Ch. 13)* — Order type that fills whatever can fill immediately at the limit price and cancels any unfilled remainder. Prevents the order from resting on the book and leaking strategy information after the moment of execution. Useful for signal-driven strategies that don't want to be hit later.
+
 **IEX feed** *(Ch. 6, intraday)* — Trade prints from IEX (Investors Exchange), one US equity venue. The free tier of Alpaca's Market Data API delivers IEX-only minute bars. Compare *SIP* (the consolidated full-tape feed across all venues, paid). Has gaps — minutes when IEX itself had no print but other venues did produce no bar at all (~2-3% of RTH minutes typically missing on QQQ).
 
 **Impact (market impact)** *(Ch. 12)* — The adverse price move caused by your own order eating through the resting book. Modeled by the *square-root impact law*: impact = η · σ<sub>d</sub> · √(Q/ADV), in fractional units. Empirically robust across markets, with η ≈ 0.1 for liquid US equities. For retail-sized trades on QQQ ($10k-$100k), impact is well below half-spread; impact only dominates at $10M+ institutional size.
@@ -388,10 +396,14 @@ heavy a distribution's tails are. Equals 3 for a normal distribution; report
 
 ## L
 
+**Latency (signal-to-fill)** *(Ch. 13)* — Wall-clock time between the signal logic emitting an order and the exchange matching engine processing it. Components: signal compute, network RTT to broker, broker routing, exchange matching, response RTT. Random-walk-regime cost: σ<sub>drift</sub> = σ<sub>1min</sub> · √(Δt/60s); E\|drift\| ≈ 0.80 σ<sub>drift</sub>. Resolution-dependent: at 1-min/100ms latency drift is ~4% of bar σ (invisible); at 1-sec/200ms it's ~45% (dominant). Order-of-magnitude reference: co-located HFT < 1ms; cloud retail bot 5-50ms; retail desktop 50-500ms.
+
 **Lag (*k*)** *(Ch. 2)* — The number of periods by which a series is shifted
 when computing autocorrelation.
 
 **Lookback** *(Ch. 8, intraday)* — The number of bars (or wall-clock units) of history fed into a signal computation. Often denoted *N* in this curriculum's strategy notation. *N* = 1 with QQQ closing-window minute returns harvests Ch7's lag-1 mean-reversion most cleanly.
+
+**Limit order** *(Ch. 13)* — A standing instruction to buy at price *p* or lower (or sell at *p* or higher). If posted away from the inside touch, it joins the book and the trader becomes the *maker*; the fill is conditional (it executes only if a counterparty crosses the spread to your price). Trades the certainty of a market order for a price floor/ceiling and a chance at the maker rebate.
 
 **Least squares** *(Ch. 7)* — The procedure of fitting a line (or hyperplane) by minimising the sum of squared residuals: SS(α, β) = Σ (y<sub>t</sub> − α − β·x<sub>t</sub>)². Closed-form solutions: *β̂* = Cov(x, y) / Var(x), *α̂* = ȳ − β̂·x̄.
 
@@ -413,6 +425,12 @@ two periods: `ln(Pₜ / Pₜ₋₁)`. Log returns *add* across periods, which ma
 multi-period math simpler.
 
 ## M
+
+**Maker** *(Ch. 13)* — The liquidity-providing side of a trade: the resting limit order on the book that a taker hits. Earns the maker rebate (~$0.0020-$0.0030/share on tier-1 US equity venues). A passive limit posted away from the inside touch becomes a maker order; a marketable limit (already at-or-through the touch) is a taker.
+
+**Maker rebate** *(Ch. 13)* — Per-share credit paid by an exchange to the maker (passive liquidity provider). NASDAQ tier-1 ≈ $0.0030/share. On QQQ at ≈ $695/share that's 0.043 bp per maker leg — small, but non-zero, and only available to non-marketable limit fills. A tiebreaker on near-breakeven strategies; insufficient to rescue a structurally cost-dominated strategy.
+
+**Market order** *(Ch. 13)* — A standing instruction to buy or sell *now* at the best available price. Crosses the spread; the trader is the *taker*. Fill is near-guaranteed; price is not — on a thin book the order may walk through several levels. The instrument that pays the spread in exchange for execution certainty.
 
 **Mean (μ)** *(Ch. 1)* — The arithmetic average. Sum the values, divide by
 the count.
@@ -665,6 +683,10 @@ Complement of *idiosyncratic risk*; formalized via factor models in later
 chapters.
 
 ## T
+
+**Taker** *(Ch. 13)* — The liquidity-removing side of a trade: a market order or marketable limit that crosses the spread and lifts a resting limit. Pays the taker fee (~$0.0030/share on tier-1 US equity venues), pays the spread, and gets immediate execution. The complement of *maker*.
+
+**Toxicity** *(Ch. 13)* — See *Adverse selection*.
 
 **Time bar** *(Ch. 6, intraday)* — A bar covering a fixed wall-clock interval (e.g. 1 minute, 5 minutes). The default sampling for most quant work; constant cadence; varying information density across the session. Compare *volume bar*, *dollar bar*, *imbalance bar*.
 

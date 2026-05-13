@@ -47,7 +47,7 @@ An earlier version of this curriculum (commits before 2026-05-07) included a por
 | # | Chapter | Topic |
 |---|---------|-------|
 | 12 | [`12-costs-slippage-capacity`](./12-costs-slippage-capacity) | Costs, slippage, and capacity: Roll's and Corwin-Schultz half-spread estimators (0.72 bp on QQQ, agreeing within 10%), commission references (PFOF vs IBKR tiered), square-root impact law, cost-aware threshold optimization (k\*=0.70 cost-naive → k\*=2.20 cost-aware), and capacity Q\* — closes the Ch8→Ch11 deflation arc with after-cost Sharpe = −2.97 and capacity Q\* = $0. The strategy does not exist as a tradable edge. |
-| 13 | _planned_ | Microstructure and execution: order book mechanics, bid/ask, market vs limit orders, implementation shortfall. |
+| 13 | [`13-microstructure-execution`](./13-microstructure-execution) | Microstructure and execution: order types (market/limit/IOC/FOK/marketable-limit/hidden/pegged), maker-taker economics, PFOF; passive-limit simulation on the Ch12 cost-aware MR strategy (fill rate 89%, pre-toxicity Sharpe +0.58); adverse-selection diagnostic (toxicity = drift_unconditional − drift_filled = 0.17 bp; unfilled-bucket drift +8.1 bp — the self-cancelled winners); latency as resolution-dependent cost (4% of bar σ at 1-min/100ms → 45% at 1-sec/200ms); maker rebate (0.043 bp/leg on QQQ). Closes the execution arc: −2.97 (market orders) → −1.11 (passive entry + rebate). Passive execution narrows the loss by ~1.9 Sharpe points but does not cross zero — the exit leg still pays the wedge. |
 
 ### Part 8 — Sizing, Regime, More Strategies
 
