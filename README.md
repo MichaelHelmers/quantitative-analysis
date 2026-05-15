@@ -53,7 +53,7 @@ An earlier version of this curriculum (commits before 2026-05-07) included a por
 
 | # | Chapter | Topic |
 |---|---------|-------|
-| 14 | _planned_ | Position sizing and risk of ruin: Kelly, fractional Kelly, drawdown caps; EVT-based tail estimation when losses are fat-tailed. |
+| 14 | [`14-position-sizing`](./14-position-sizing) | Position sizing and risk of ruin: three flavors — per-trade (Kelly, fractional Kelly, fixed-fractional), per-period (vol targeting), and when to stop (drawdown stops, EVT risk-of-ruin). On the stipulated synthetic strategy (Sharpe 0.143/trade, μ=1 bp, σ=7 bp), full-Kelly f\*=204 exposes the unit-sensitivity gotcha (f·σ=0.143 breaks Kelly's small-bet approximation), so the chapter reframes around f·σ as the diagnostic and vol-target leverage 5.83× as the recommended baseline. EVT-vs-MC sidebar (ξ̂_Normal=−0.120 vs ξ̂_t=+0.192) pays the retired-Ch10 salvage debt. Drawdown stops reframed as regime-change detectors (halve-on-5% costs 361× growth for 29% MDD reduction on a stationary positive-EV DGP). |
 | 15 | _planned_ | Intraday vol and regime detection: GARCH(1,1) on intraday data, EWMA, FOMC/CPI/NFP windows, vol-targeting and regime-aware sizing. |
 | 16 | _planned_ | More strategies: momentum, breakout, event-driven — each evaluated through the full Ch09–14 discipline. |
 

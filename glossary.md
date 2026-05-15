@@ -779,3 +779,35 @@ diversification mathematically possible; a useful upper-bound benchmark.
 **√t rule** *(Ch. 1)* — Under i.i.d. assumptions, the variance of a *t*-period
 sum scales linearly in *t*, so the *standard deviation* scales by `√t`. This
 is why annualized volatility uses `× √252` rather than `× 252`.
+
+---
+
+## Ch. 14 additions — Position sizing and risk of ruin
+
+The chapter's Key Terms table is the source of truth; entries below are reproduced verbatim from `14-position-sizing/README.md`. Appended here (rather than re-sorted alphabetically) per the project's "do not re-order existing glossary entries" convention.
+
+**Bet size** *(Ch. 14)* — The fraction of equity (or fixed dollar amount) committed to a single trade. Distinct from leverage, which aggregates across positions.
+
+**Leverage** *(Ch. 14)* — Ratio of total exposed notional to equity. A leverage multiplier of 5× means $5 of position per $1 of equity.
+
+**Kelly criterion** *(Ch. 14)* — Bet-sizing rule that maximizes long-run expected log-wealth growth. Two forms: Bernoulli f\* = (bp − q)/b and continuous f\* = μ/σ².
+
+**Full Kelly** *(Ch. 14)* — The Kelly-optimal fraction itself (k = 1). Theoretically growth-maximizing; in practice over-levered due to μ-estimation noise and Taylor-expansion breakdown on bp-scale returns.
+
+**Fractional Kelly** *(Ch. 14)* — A scaled-down Kelly bet (k·f\* for k ∈ (0, 1)). Trades expected growth for reduced drawdown variance. Quarter-Kelly is a common practitioner ceiling.
+
+**Fixed-fractional sizing** *(Ch. 14)* — Bet a fixed fraction of equity per trade, sized by stop distance: size = (r<sub>per_trade</sub> · equity) / d. Ignores μ; bets equal risk.
+
+**Volatility targeting** *(Ch. 14)* — Set leverage so per-period PnL has a stated σ target: size = (τ<sub>daily</sub> · equity) / σ̂<sub>t</sub>. The chapter's recommended baseline.
+
+**Drawdown stop** *(Ch. 14)* — A rule that reduces or halts position sizing when running drawdown from peak exceeds a threshold (e.g., halve-on-5%, halt-on-10%). A regime-change detector, not a growth tool.
+
+**Risk of ruin** *(Ch. 14)* — Probability of breaching a terminal-loss threshold (e.g., 50% drawdown, account bust) over a stated horizon. Estimated by MC; extrapolated to deep tails by EVT.
+
+**Expected log-wealth growth rate** *(Ch. 14)* — g = E[log(W<sub>t+1</sub>/W<sub>t</sub>)]. The objective Kelly maximizes; the right objective for a strategy compounding its own capital.
+
+**f·σ diagnostic** *(Ch. 14)* — Per-trade equity-at-risk per σ of return. When f·σ is not ≪ 1, Kelly's Taylor expansion has broken down and the textbook formula is informational only.
+
+**GPD shape ξ** *(Ch. 14)* — Tail-domain indicator from a Generalized Pareto fit. ξ < 0 bounded (Weibull), ξ = 0 exponential (Gumbel), ξ > 0 heavy (Fréchet / Pareto). The headline EVT parameter.
+
+**DGP (data-generating process)** *(Ch. 14)* — The joint distribution producing each trade's return — μ, σ, tail shape, autocorrelation structure. Sizing rules in this chapter assume a stationary DGP; Ch15 / Ch16 relax that.
