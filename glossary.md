@@ -811,3 +811,29 @@ The chapter's Key Terms table is the source of truth; entries below are reproduc
 **GPD shape ξ** *(Ch. 14)* — Tail-domain indicator from a Generalized Pareto fit. ξ < 0 bounded (Weibull), ξ = 0 exponential (Gumbel), ξ > 0 heavy (Fréchet / Pareto). The headline EVT parameter.
 
 **DGP (data-generating process)** *(Ch. 14)* — The joint distribution producing each trade's return — μ, σ, tail shape, autocorrelation structure. Sizing rules in this chapter assume a stationary DGP; Ch15 / Ch16 relax that.
+
+---
+
+## Ch. 15 additions — Intraday vol and regime detection
+
+The chapter's Key Terms table is the source of truth; entries below are reproduced verbatim from `15-intraday-vol-regime/README.md`. Appended here (rather than re-sorted alphabetically) per the project's "do not re-order existing glossary entries" convention.
+
+**Volatility seasonality** *(Ch. 15)* — Systematic intraday pattern in σ (e.g., the open-midday-close U-shape on US equities). Estimated here as a trailing-60-session per-minute std with point-in-time discipline.
+
+**EWMA** *(Ch. 15)* — Exponentially-weighted moving average of squared returns. Recursion σ̂²<sub>t</sub> = (1 − λ)·r²<sub>t−1</sub> + λ·σ̂²<sub>t−1</sub>; RiskMetrics default λ = 0.94. No long-run mean — drifts unboundedly if `r` runs hot.
+
+**GARCH(1,1)** *(Ch. 15)* — The canonical vol-clustering model: σ²<sub>t</sub> = ω + α·r²<sub>t−1</sub> + β·σ²<sub>t−1</sub>, fit by MLE. Adds a long-run anchor ω that EWMA lacks.
+
+**Persistence** *(Ch. 15)* — α + β in GARCH(1,1). Vol-shock half-life. Equity indices typically run 0.90-0.99 on long windows; on a 251-session sample this chapter measures 0.84, near the lower bound of identifiability.
+
+**Long-run variance** *(Ch. 15)* — ω / (1 − α − β) in a stationary GARCH(1,1). The unconditional variance the recursion drifts toward when no innovations arrive.
+
+**Standardized residual** *(Ch. 15)* — z<sub>t</sub> = r<sub>t</sub> / σ̂<sub>t</sub>. Should be ~N(0, 1) if σ̂<sub>t</sub> is correctly specified. ACF(z²) ≈ 0 is the GARCH-fit diagnostic.
+
+**Regime** *(Ch. 15)* — A stretch of time during which the DGP's parameters are stable. A regime change is a parameter shift (most often in σ²). Regimes are latent — only estimated, never directly observed.
+
+**Hidden Markov model (HMM)** *(Ch. 15)* — A two-layer model: latent discrete state s<sub>t</sub> evolving as a Markov chain, observation r<sub>t</sub> drawn from a state-specific emission. Fit by EM; the 2-state Gaussian variant in §5.3 is the canonical regime-detection workhorse.
+
+**EM algorithm** *(Ch. 15)* — Iterative MLE procedure for latent-variable models. E-step: compute posterior over latent states given current parameters (forward-backward for HMMs). M-step: maximize expected complete-data log-likelihood. Iterate until convergence; doesn't guarantee a global optimum.
+
+**CUSUM change-point** *(Ch. 15)* — Cumulative-sum statistic on a mean-zero residual (here, z² − 1). Flags the session at which a persistent drift reaches a √t-scaled threshold. Sensitivity tuned by the multiplier k; canonical k = 5 needs hundreds of thousands of obs to fire.
