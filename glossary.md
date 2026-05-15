@@ -837,3 +837,29 @@ The chapter's Key Terms table is the source of truth; entries below are reproduc
 **EM algorithm** *(Ch. 15)* — Iterative MLE procedure for latent-variable models. E-step: compute posterior over latent states given current parameters (forward-backward for HMMs). M-step: maximize expected complete-data log-likelihood. Iterate until convergence; doesn't guarantee a global optimum.
 
 **CUSUM change-point** *(Ch. 15)* — Cumulative-sum statistic on a mean-zero residual (here, z² − 1). Flags the session at which a persistent drift reaches a √t-scaled threshold. Sensitivity tuned by the multiplier k; canonical k = 5 needs hundreds of thousands of obs to fire.
+
+---
+
+## Ch. 16 additions — More strategies: momentum, breakout, event-driven
+
+The chapter's Key Terms table is the source of truth; entries below are reproduced verbatim from `16-more-strategies/README.md`. Appended here (rather than re-sorted alphabetically) per the project's "do not re-order existing glossary entries" convention.
+
+**Momentum** *(Ch. 16)* — A strategy family that bets on continuation of the most recent move. Operationally: enter when the trailing-N return exceeds a vol-scaled threshold; hold K minutes. Ch7 §6's positive lag-120 ρ is the hint this chapter pursues.
+
+**Opening range (OR)** *(Ch. 16)* — The price interval [min L, max H] traversed during the first 30 minutes of the RTH session. The reference range whose break the ORB family trades. Mean width on QQQ on this window: 50.5 bp; p75: 72.2 bp.
+
+**Breakout confirmation** *(Ch. 16)* — An ORB execution variant that enters at the *close* of the breaking bar with a market order. Takes liquidity; pays the spread on entry; fill certainty ≈ 1. The variant whose OR-p75 × ε=10 cell is the chapter's single positive cost-aware result.
+
+**Breakout anticipation** *(Ch. 16)* — An ORB execution variant that posts a stop-limit at OR<sub>high</sub> + ε bp (long) or OR<sub>low</sub> − ε bp (short) before the break confirms. Makes liquidity; earns the spread when filled; subject to Ch13 toxicity. On this data toxicity (+1.82 bp) exceeds the rebate (~0.72 bp).
+
+**False break** *(Ch. 16)* — A bar that crosses the OR boundary intra-bar but closes back inside. The wick is microstructure noise, not directional information. Filtered by requiring close-based triggers and ε > 0 padding.
+
+**Event-driven strategy** *(Ch. 16)* — A family that trades around scheduled releases (FOMC, CPI, NFP) on the assumption that pre-release positioning or post-release information propagation creates predictable short-window drift. Pain point on a single-symbol single-year window: sample size.
+
+**Pre-release drift (H1)** *(Ch. 16)* — The event-driven hypothesis that sign(pre-window return) predicts sign(release-window return). Mechanism: positioning flow ahead of a known event leaves a directional residue. Bootstrap CI on QQQ FOMC N=8: (−41.6, +2.1) — no verdict.
+
+**Post-release continuation (H2)** *(Ch. 16)* — The event-driven hypothesis that sign(release-window return) predicts sign(post-window return). Mechanism: information propagation continues the initial move. Bootstrap CI on QQQ FOMC N=8: (−25.7, +7.1) — no verdict.
+
+**Regime fingerprint** *(Ch. 16)* — The family × regime Sharpe heatmap. Reads "where does this family work?" rather than "is this family good on average?". Useful for combination logic (Exercise 4); fragile to per-cell N.
+
+**Family-dependent execution** *(Ch. 16)* — The rule that the right order type depends on the family's expected post-signal move direction. MR makes (move reverses to fill); momentum and breakout-confirmation take (move is in progress); breakout-anticipation makes and gets toxified (resting limit fills when break fails). Derived from Ch13 §3-§4.
